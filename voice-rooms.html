@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#180d39">
+  <title>FREE CHAT · Live Party</title>
+  <link rel="stylesheet" href="voice-rooms.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="back" href="index-fixed.html" aria-label="Back">‹</a>
+    <div class="brand-block">
+      <strong>FREE CHAT</strong>
+      <span>LIVE PARTY</span>
+    </div>
+    <button id="refreshBtn" class="icon-btn" aria-label="Refresh rooms">↻</button>
+  </header>
+
+  <main class="page">
+    <section id="lobby">
+      <div class="hero">
+        <span class="eyebrow">🇳🇬 YOUR PEOPLE • YOUR PARTY</span>
+        <h1>Live Party <span>✦</span></h1>
+        <p>Meet people, join conversations and enjoy the moment.</p>
+        <button id="openCreate" class="primary">＋ Create a party</button>
+      </div>
+
+      <div class="section-title">
+        <div><h2>Explore parties</h2><p>Public rooms from your community</p></div>
+        <span id="roomCount" class="count">0 rooms</span>
+      </div>
+
+      <div id="notice" class="notice" role="status"></div>
+      <div id="roomsList" class="rooms-list">
+        <div class="empty">Loading parties…</div>
+      </div>
+    </section>
+
+    <section id="partyRoom" class="party-room hidden">
+      <div class="party-banner">
+        <div class="party-banner-top">
+          <button id="backToLobby" class="glass-btn">← Parties</button>
+          <span class="live-label"><i></i> PARTY ROOM</span>
+          <button id="leaveRoom" class="glass-btn">Leave ✕</button>
+        </div>
+        <div class="party-heading">
+          <div class="party-emblem">✦</div>
+          <div>
+            <p class="eyebrow">WELCOME TO THE PARTY</p>
+            <h1 id="activeRoomName">Live Party</h1>
+            <p id="activeRoomTopic">Meet and chat with everyone</p>
+          </div>
+        </div>
+        <div class="party-stats">
+          <span>🎙️ <b id="seatCount">0</b> seats</span>
+          <span>👥 <b id="memberCount">0</b> members</span>
+          <span>🎁 Party gifts</span>
+        </div>
+      </div>
+
+      <section class="seats-section">
+        <div class="section-title">
+          <div><h2>Party seats</h2><p>Host and speakers</p></div>
+          <span class="seat-note">HOST ★</span>
+        </div>
+        <div id="seatsGrid" class="seats-grid"></div>
+        <p id="seatRequestStatus" class="hint">Seat requests need the host’s approval.</p>
+        <label class="seat-setting hidden"><input type="checkbox" id="allowAnyoneSeat"> Allow anyone to take a seat without asking</label>
+        <button id="requestSeatBtn" class="primary seat-request-button" type="button">✋ Request a seat</button>
+        <div id="seatRequestsPanel" class="seat-requests-panel hidden"><h3>Pending seat requests</h3><div id="seatRequestsList"><p class="hint">No pending seat requests.</p></div></div>
+        <div id="moderatorPanel" class="seat-requests-panel hidden"><h3>Host controls · Participants</h3><p class="hint">Promote trusted members, remove moderator roles, or remove participants from this party.</p><div id="moderatorMembersList"><p class="hint">Participants will appear here.</p></div></div>
+        <p class="hint">Live microphone audio uses WebRTC. Hosts, moderators and approved speakers can transmit; listeners can hear.</p>
+      </section>
+
+      <section class="chat-panel">
+        <div class="chat-heading">
+          <div><h2>Party chat</h2><p>Room conversation</p></div>
+          <span class="chat-status"><i></i> Room open</span>
+        </div>
+        <div id="chatMessages" class="chat-messages" aria-live="polite">
+          <div class="system-message">Welcome! Be kind and respectful to everyone.</div>
+        </div>
+        <form id="chatForm" class="chat-form">
+          <input id="chatInput" maxlength="300" placeholder="Say something nice…" autocomplete="off" required>
+          <button class="send-btn" type="submit" aria-label="Send message">➤</button>
+        </form>
+        <p class="hint">This chat is a local preview and is not shared with other users yet.</p>
+      </section>
+
+      <section class="gift-panel">
+        <div class="gift-heading">
+          <div><h2>🎁 Send a gift</h2><p>Make the party special</p></div>
+          <span class="coin-balance">🪙 Demo gifts</span>
+        </div>
+        <div class="gift-grid">
+          <button class="gift-btn" data-gift="💎" data-cost="10"><span>💎</span><b>Crystal</b><small>10 coins</small></button>
+          <button class="gift-btn" data-gift="❤️" data-cost="20"><span>❤️</span><b>Love</b><small>20 coins</small></button>
+          <button class="gift-btn" data-gift="🌹" data-cost="50"><span>🌹</span><b>Rose</b><small>50 coins</small></button>
+          <button class="gift-btn" data-gift="👑" data-cost="100"><span>👑</span><b>Crown</b><small>100 coins</small></button>
+        </div>
+        <p id="giftNotice" class="hint">Demo only — gifts do not spend coins or transfer money.</p>
+      </section>
+
+      <div class="bottom-controls">
+        <button id="micBtn" class="control-btn mic-btn">
+          <span id="micIcon">🎙️</span><span id="micLabel">Enable my mic</span>
+        </button>
+        <button id="handBtn" class="control-btn">✋ Raise hand</button>
+        <button id="giftBtn" class="control-btn gift-quick">🎁 Gifts</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="createModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="createTitle">
+    <form id="createForm" class="dialog">
+      <button type="button" id="closeCreate" class="modal-x" aria-label="Close">×</button>
+      <p class="eyebrow">START YOUR OWN PARTY</p>
+      <h2 id="createTitle">Create a party</h2>
+      <label for="roomName">Party name</label>
+      <input id="roomName" maxlength="60" placeholder="e.g. Naija Hangout" required>
+      <label for="roomTopic">What are we talking about?</label>
+      <input id="roomTopic" maxlength="120" placeholder="Music, games, daily life…">
+      <label for="roomType">Who can find this party?</label>
+      <select id="roomType">
+        <option value="public">Public — everyone can find it</option>
+        <option value="private">Private — not listed publicly</option>
+      </select>
+      <p class="hint">Private invitations will be added later.</p>
+      <button class="primary full" type="submit">Create party ✦</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+  <script src="voice-rooms.js"></script>
+</body>
+</html>

@@ -1,0 +1,3590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#2563eb"
+    >
+
+    <title>FREE CHAT</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+<div
+    class="free-chat-app"
+    id="app"
+>
+
+
+<!-- =====================================================
+     AUTH SCREEN
+===================================================== -->
+
+<div
+    class="auth-app"
+    id="authScreen"
+>
+
+
+    <div class="auth-logo">
+
+        <div class="logo-icon">
+            💬
+        </div>
+
+        <h1>
+            FREE CHAT
+        </h1>
+
+        <p>
+            Connect. Chat. Stay close.
+        </p>
+
+    </div>
+
+
+    <!-- LOGIN -->
+
+    <section
+        class="auth-box"
+        id="loginBox"
+    >
+
+        <h2>
+            Welcome back 👋
+        </h2>
+
+        <p class="auth-subtitle">
+            Login to continue chatting
+        </p>
+
+
+        <form onsubmit="login(event)">
+
+            <label>
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="loginEmail"
+                placeholder="Enter your email"
+                required
+            >
+
+
+            <label>
+                Password
+            </label>
+
+
+            <div class="password-box">
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Enter your password"
+                    required
+                >
+
+                <button
+                    type="button"
+                    onclick="togglePassword('loginPassword', this)"
+                >
+                    👁️
+                </button>
+
+            </div>
+
+
+            <button
+                class="auth-btn"
+                type="submit"
+            >
+                Login
+            </button>
+
+        </form>
+
+
+        <button
+            type="button"
+            class="forgot-btn"
+            onclick="forgotPassword()"
+        >
+            Forgot password?
+        </button>
+
+
+        <div class="divider">
+            <span>OR</span>
+        </div>
+
+
+        <p class="switch-text">
+
+            Don't have an account?
+
+            <button
+                type="button"
+                onclick="showSignup()"
+            >
+                Create account
+            </button>
+
+        </p>
+
+    </section>
+
+
+    <!-- SIGNUP -->
+
+    <section
+        class="auth-box hidden"
+        id="signupBox"
+    >
+
+        <h2>
+            Create account 🚀
+        </h2>
+
+        <p class="auth-subtitle">
+            Join FREE CHAT today
+        </p>
+
+
+        <form onsubmit="signup(event)">
+
+            <label>
+                Username
+            </label>
+
+            <input
+                type="text"
+                id="signupUsername"
+                placeholder="Choose a username"
+                minlength="3"
+                required
+            >
+
+
+            <label>
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="signupEmail"
+                placeholder="Enter your email"
+                required
+            >
+
+
+            <label>
+                Password
+            </label>
+
+
+            <div class="password-box">
+
+                <input
+                    type="password"
+                    id="signupPassword"
+                    placeholder="Create a password"
+                    minlength="6"
+                    required
+                >
+
+                <button
+                    type="button"
+                    onclick="togglePassword('signupPassword', this)"
+                >
+                    👁️
+                </button>
+
+            </div>
+
+
+            <label>
+                Confirm Password
+            </label>
+
+
+            <div class="password-box">
+
+                <input
+                    type="password"
+                    id="signupConfirm"
+                    placeholder="Confirm your password"
+                    minlength="6"
+                    required
+                >
+
+                <button
+                    type="button"
+                    onclick="togglePassword('signupConfirm', this)"
+                >
+                    👁️
+                </button>
+
+            </div>
+
+
+            <button
+                class="auth-btn"
+                type="submit"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+
+        <div class="divider">
+            <span>OR</span>
+        </div>
+
+
+        <p class="switch-text">
+
+            Already have an account?
+
+            <button
+                type="button"
+                onclick="showLogin()"
+            >
+                Login
+            </button>
+
+        </p>
+
+    </section>
+
+
+    <div id="authMessage"></div>
+
+</div>
+
+
+<!-- ==========================================
+     ✏️ EDIT PROFILE SCREEN
+========================================== -->
+
+<section id="editProfileScreen" class="edit-profile-screen hidden">
+
+    <!-- HEADER -->
+    <header class="edit-profile-header">
+
+        <button
+            type="button"
+            class="edit-profile-back-btn"
+            onclick="closeEditProfile()"
+        >
+            ←
+        </button>
+
+        <div>
+            <h2>Edit Profile</h2>
+            <p>Update your profile information</p>
+        </div>
+
+    </header>
+
+
+    <!-- PROFILE PHOTO -->
+    <div class="edit-profile-photo-section">
+
+        <div class="edit-profile-photo-wrapper">
+
+            <img
+                id="editProfileAvatar"
+                src="https://i.pravatar.cc/150?img=12"
+                alt="Profile picture"
+            >
+
+            <button
+                type="button"
+                class="change-photo-btn"
+                onclick="document.getElementById('profilePhotoInput').click()"
+            >
+                📷
+            </button>
+
+        </div>
+
+        <input
+            type="file"
+            id="profilePhotoInput"
+            accept="image/*"
+            hidden
+            onchange="previewProfilePhoto(event)"
+        >
+
+        <p>Change profile picture</p>
+
+    </div>
+
+
+    <!-- FORM -->
+    <div class="edit-profile-form">
+
+        <!-- USERNAME -->
+
+        <label for="editUsername">
+            Username
+        </label>
+
+        <input
+            type="text"
+            id="editUsername"
+            placeholder="Enter your username"
+            maxlength="30"
+            autocomplete="off"
+        >
+
+
+        <!-- BIO -->
+
+        <label for="editBio">
+            Bio
+        </label>
+
+        <textarea
+            id="editBio"
+            placeholder="Tell people a little about yourself..."
+            maxlength="160"
+            rows="4"
+        ></textarea>
+
+        <div class="bio-counter">
+            <span id="bioCharacterCount">0</span>/160
+        </div>
+
+<div class="edit-profile-field">
+
+    <label>Gender</label>
+
+    <div class="gender-options">
+
+        <label class="gender-option">
+            <input
+                type="radio"
+                name="gender"
+                value="male"
+                id="genderMale"
+            >
+            <span>♂️ Male</span>
+        </label>
+
+        <label class="gender-option">
+            <input
+                type="radio"
+                name="gender"
+                value="female"
+                id="genderFemale"
+            >
+            <span>♀️ Female</span>
+        </label>
+
+    </div>
+
+</div>
+
+        <!-- EMAIL -->
+
+        <label>
+            Email
+        </label>
+
+        <div class="edit-profile-email" id="editProfileEmail">
+            Loading...
+        </div>
+
+
+        <!-- SAVE -->
+
+        <button
+            type="button"
+            class="save-profile-btn"
+            onclick="saveProfileChanges()"
+        >
+            💾 Save Changes
+        </button>
+
+    </div>
+
+</section>
+
+<!-- ==========================================
+     🔒 FREE CHAT — PRIVACY SETTINGS
+========================================== -->
+
+<section
+    id="privacySettingsScreen"
+    class="privacy-settings-screen hidden"
+>
+
+    <!-- HEADER -->
+
+    <header class="privacy-settings-header">
+
+        <button
+            type="button"
+            class="privacy-back-btn"
+            onclick="closePrivacySettings()"
+        >
+            ←
+        </button>
+
+        <div>
+            <h2>Privacy Settings</h2>
+            <p>Control who can interact with you</p>
+        </div>
+
+    </header>
+
+
+    <!-- ==========================================
+         PROFILE VISIBILITY
+    =========================================== -->
+
+    <div class="privacy-settings-group">
+
+        <h3>PROFILE</h3>
+
+        <div class="privacy-setting-card">
+
+            <div class="privacy-setting-icon">
+                👤
+            </div>
+
+            <div class="privacy-setting-info">
+
+                <strong>Who can see your profile?</strong>
+
+                <small>
+                    Choose who can view your profile.
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="privacy-option-row"
+            onclick="chooseProfileVisibility('everyone')"
+        >
+
+            <span>🌍</span>
+
+            <div>
+                <strong>Everyone</strong>
+                <small>Anyone can see your profile</small>
+            </div>
+
+            <span
+                id="profileEveryoneCheck"
+                class="privacy-check"
+            >
+                ✓
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="privacy-option-row"
+            onclick="chooseProfileVisibility('friends')"
+        >
+
+            <span>👥</span>
+
+            <div>
+                <strong>Friends</strong>
+                <small>Only your friends can see it</small>
+            </div>
+
+            <span
+                id="profileFriendsCheck"
+                class="privacy-check"
+            >
+                ✓
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="privacy-option-row"
+            onclick="chooseProfileVisibility('only_me')"
+        >
+
+            <span>🔒</span>
+
+            <div>
+                <strong>Only me</strong>
+                <small>Only you can see your profile</small>
+            </div>
+
+            <span
+                id="profileOnlyMeCheck"
+                class="privacy-check"
+            >
+                ✓
+            </span>
+
+        </button>
+
+    </div>
+
+
+    <!-- ==========================================
+         FRIEND REQUESTS
+    =========================================== -->
+
+    <div class="privacy-settings-group">
+
+        <h3>FRIEND REQUESTS</h3>
+
+        <div class="privacy-setting-card">
+
+            <div class="privacy-setting-icon">
+                🤝
+            </div>
+
+            <div class="privacy-setting-info">
+
+                <strong>
+                    Who can send you friend requests?
+                </strong>
+
+                <small>
+                    Control who can add you as a friend.
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="privacy-option-row"
+            onclick="chooseFriendRequestPrivacy('everyone')"
+        >
+
+            <span>🌍</span>
+
+            <div>
+                <strong>Everyone</strong>
+                <small>Anyone can send you a request</small>
+            </div>
+
+            <span
+                id="requestEveryoneCheck"
+                class="privacy-check"
+            >
+                ✓
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="privacy-option-row"
+            onclick="chooseFriendRequestPrivacy('friends_of_friends')"
+        >
+
+            <span>👥</span>
+
+            <div>
+                <strong>Friends of friends</strong>
+                <small>People connected to your friends</small>
+            </div>
+
+            <span
+                id="requestFriendsCheck"
+                class="privacy-check"
+            >
+                ✓
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="privacy-option-row"
+            onclick="chooseFriendRequestPrivacy('nobody')"
+        >
+
+            <span>🔒</span>
+
+            <div>
+                <strong>Nobody</strong>
+                <small>Don't allow new friend requests</small>
+            </div>
+
+            <span
+                id="requestNobodyCheck"
+                class="privacy-check"
+            >
+                ✓
+            </span>
+
+        </button>
+
+    </div>
+
+
+    <!-- ==========================================
+         MESSAGES
+    =========================================== -->
+
+    <div class="privacy-settings-group">
+
+        <h3>MESSAGES</h3>
+
+        <div class="privacy-setting-card">
+
+            <div class="privacy-setting-icon">
+                💬
+            </div>
+
+            <div class="privacy-setting-info">
+
+                <strong>
+                    Who can message you?
+                </strong>
+
+                <small>
+                    Control who can start conversations with you.
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="privacy-option-row"
+            onclick="chooseMessagePrivacy('everyone')"
+        >
+
+            <span>🌍</span>
+
+            <div>
+                <strong>Everyone</strong>
+                <small>Anyone can message you</small>
+            </div>
+
+            <span
+                id="messageEveryoneCheck"
+                class="privacy-check"
+            >
+                ✓
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="privacy-option-row"
+            onclick="chooseMessagePrivacy('friends')"
+        >
+
+            <span>👥</span>
+
+            <div>
+                <strong>Friends</strong>
+                <small>Only your friends can message you</small>
+            </div>
+
+            <span
+                id="messageFriendsCheck"
+                class="privacy-check"
+            >
+                ✓
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="privacy-option-row"
+            onclick="chooseMessagePrivacy('nobody')"
+        >
+
+            <span>🔒</span>
+
+            <div>
+                <strong>Nobody</strong>
+                <small>Don't allow new conversations</small>
+            </div>
+
+            <span
+                id="messageNobodyCheck"
+                class="privacy-check"
+            >
+                ✓
+            </span>
+
+        </button>
+
+    </div>
+
+
+    <footer class="privacy-settings-footer">
+
+        <p>🔒 Your privacy matters</p>
+
+        <small>
+            Your settings are saved to your FREE CHAT account.
+        </small>
+
+    </footer>
+
+</section>
+
+
+
+<!-- ==========================================
+     🚫 BLOCKED USERS
+========================================== -->
+
+<section id="blockedUsersScreen" class="blocked-users-screen hidden">
+
+    <header class="blocked-users-header">
+
+        <button
+            type="button"
+            class="blocked-back-btn"
+            onclick="closeBlockedUsers()"
+        >
+            ←
+        </button>
+
+        <div>
+            <h2>Blocked Users</h2>
+            <p>Manage people you've blocked</p>
+        </div>
+
+    </header>
+
+
+    <!-- SEARCH -->
+
+    <div class="blocked-search-wrapper">
+
+        <span>🔍</span>
+
+        <input
+            type="text"
+            id="blockedUsersSearch"
+            placeholder="Search blocked users..."
+            oninput="searchBlockedUsers()"
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <!-- LIST -->
+
+    <div id="blockedUsersList" class="blocked-users-list">
+
+        <div class="blocked-users-loading">
+            Loading blocked users...
+        </div>
+
+    </div>
+
+
+    <!-- EMPTY STATE -->
+
+    <div
+        id="blockedUsersEmpty"
+        class="blocked-users-empty hidden"
+    >
+
+        <div class="blocked-empty-icon">
+            🛡️
+        </div>
+
+        <h3>No blocked users</h3>
+
+        <p>
+            People you block will appear here.
+            You can unblock them anytime.
+        </p>
+
+    </div>
+
+</section>
+<!-- =====================================================
+     👤 FREE CHAT PROFILE
+===================================================== -->
+
+<section
+    id="profilePanel"
+    class="profile-panel hidden"
+>
+
+    <!-- HEADER -->
+
+    <header class="profile-panel-header">
+
+        <button
+            type="button"
+            class="profile-back-button"
+            onclick="closeProfile()"
+            aria-label="Back"
+        >
+            ←
+        </button>
+
+        <div class="profile-panel-title">
+            <h2>Profile</h2>
+            <p>Your FREE CHAT profile</p>
+        </div>
+
+        <button
+            type="button"
+            class="profile-close-button"
+            onclick="closeProfile()"
+            aria-label="Close"
+        >
+            ✕
+        </button>
+
+    </header>
+
+
+    <!-- PROFILE CONTENT -->
+
+    <div class="profile-panel-content">
+
+        <!-- COVER -->
+
+        <div class="profile-cover">
+        </div>
+
+
+        <!-- AVATAR -->
+
+        <div class="profile-avatar-wrapper">
+
+            <img
+                id="profilePanelAvatar"
+                class="profile-panel-avatar"
+                src="https://i.pravatar.cc/160?img=12"
+                alt="Profile"
+            >
+
+        </div>
+
+
+        <!-- USER INFO -->
+
+        <div class="profile-panel-info">
+
+            <h1 id="profilePanelUsername">
+                FREE CHAT USER
+            </h1>
+
+            <p id="profilePanelEmail">
+                Loading...
+            </p>
+
+            <div class="profile-online-status">
+                <span></span>
+                Online
+            </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="profile-panel-actions">
+
+            <button
+                type="button"
+                class="profile-edit-button"
+                onclick="openEditProfile()"
+            >
+                ✏️ Edit Profile
+            </button>
+
+        </div>
+
+
+        <!-- PROFILE DETAILS -->
+
+        <div class="profile-details-card">
+
+            <div class="profile-detail-row">
+
+                <span class="profile-detail-icon">
+                    👤
+                </span>
+
+                <div>
+                    <strong>Username</strong>
+                    <small id="profileDetailUsername">
+                        Loading...
+                    </small>
+                </div>
+
+            </div>
+
+
+            <div class="profile-detail-row">
+
+                <span class="profile-detail-icon">
+                    📧
+                </span>
+
+                <div>
+                    <strong>Email</strong>
+                    <small id="profileDetailEmail">
+                        Loading...
+                    </small>
+                </div>
+
+            </div>
+
+
+            <div class="profile-detail-row">
+
+                <span class="profile-detail-icon">
+                    🟢
+                </span>
+
+                <div>
+                    <strong>Status</strong>
+                    <small>Online</small>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOGOUT -->
+
+        <button
+            type="button"
+            class="profile-logout-button"
+            onclick="logout()"
+        >
+            🚪 Log out
+        </button>
+
+    </div>
+
+</section>
+
+<!-- =================================
+     FREE CHAT SOCIAL HOME
+================================= -->
+
+<main id="homeScreen" class="home-screen">
+
+<!-- ==========================================
+     🔵 FREE CHAT TOP ACTION BAR
+========================================== -->
+
+<header class="modern-top-header">
+
+    <div class="top-header-brand">
+    <h2>FREE CHAT</h2>
+</div>
+
+
+    <!-- ➕ CREATE / QUICK ACTION -->
+
+    <button
+        type="button"
+        class="top-action-button"
+        onclick="openQuickMenu()"
+        aria-label="Create"
+    >
+        +
+    </button>
+
+
+    <!-- 🔎 SEARCH -->
+
+    <button
+        type="button"
+        class="top-action-button"
+        onclick="focusFeedSearch()"
+        aria-label="Search"
+    >
+        🔎
+    </button>
+
+
+    <!-- ☰ MENU -->
+
+    <button
+        type="button"
+        class="top-action-button"
+        onclick="openMainMenu()"
+        aria-label="Menu"
+    >
+        ☰
+    </button>
+
+</header>
+
+    <!-- =================================
+         CREATE POST
+    ================================= -->
+
+    <section class="create-post-card">
+
+        <div class="create-post-top">
+
+            <img
+                id="postAvatar"
+                class="create-post-avatar"
+                src="https://i.pravatar.cc/100?img=12"
+                alt="Your profile"
+            >
+
+            <button
+                type="button"
+                class="post-placeholder"
+                onclick="focusPostInput()"
+            >
+                What's on your mind?
+            </button>
+
+        </div>
+
+
+        <!-- POST COMPOSER -->
+
+        <div
+            class="post-input-wrapper"
+            id="postInputWrapper"
+        >
+
+            <textarea
+                id="postContent"
+                placeholder="What's on your mind?"
+                maxlength="5000"
+                rows="3"
+            ></textarea>
+
+
+            <!-- PHOTO / VIDEO INPUT -->
+
+            <input
+                type="file"
+                id="postImageInput"
+                accept="image/*,video/*"
+                hidden
+                onchange="previewPostImage(event)"
+            >
+
+
+            <!-- PHOTO / VIDEO PREVIEW -->
+
+            <div
+                id="postImagePreview"
+                class="post-image-preview hidden"
+            ></div>
+
+
+            <!-- POST ACTIONS -->
+
+            <div class="create-post-actions">
+
+                <button
+                    type="button"
+                    class="post-action"
+                    onclick="
+                        document
+                        .getElementById('postImageInput')
+                        .click()
+                    "
+                >
+
+                    📷🎥
+
+                    <span>
+                        Photo / Video
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="post-action"
+                    onclick="focusPostInput()"
+                >
+
+                    😊
+
+                    <span>
+                        Feeling
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="post-button"
+                    onclick="createPost()"
+                >
+
+                    Post
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+<!-- 🔎 FEED SEARCH -->
+<div class="feed-search-container">
+
+    <input
+        type="search"
+        id="feedSearch"
+        placeholder="🔎 Search posts..."
+        autocomplete="off"
+        aria-label="Search posts"
+    >
+
+</div>
+
+
+    <!-- =================================
+         FEED TABS
+    ================================= -->
+
+    <div class="feed-tabs">
+
+        <button
+            type="button"
+            class="active"
+            onclick="changeFeedTab('all', this)"
+        >
+            For You
+        </button>
+
+
+        <button
+            type="button"
+            onclick="changeFeedTab('following', this)"
+        >
+            Following
+        </button>
+
+
+        <button
+            type="button"
+            onclick="changeFeedTab('latest', this)"
+        >
+            Latest
+        </button>
+
+    </div>
+
+
+    <!-- =================================
+         SOCIAL FEED
+    ================================= -->
+
+    <section
+        class="social-feed"
+        id="socialFeed"
+    >
+
+        <div
+            class="feed-loading"
+            id="feedLoading"
+        >
+
+            Loading posts...
+
+        </div>
+
+
+        <div
+            class="feed-empty hidden"
+            id="feedEmpty"
+        >
+
+            <div class="feed-empty-icon">
+                🌍
+            </div>
+
+            <h3>
+                Welcome to FREE CHAT
+            </h3>
+
+            <p>
+                Share something with your friends
+                and start the conversation.
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- =================================
+         FLOATING CHAT BUTTON
+    ================================= -->
+
+    <button
+        type="button"
+        class="floating-chat-button"
+        onclick="newChat()"
+        aria-label="Start new chat"
+    >
+
+        💬
+
+    </button>
+    
+<!-- =================================
+     BOTTOM NAVIGATION
+================================= -->
+
+
+<nav class="bottom-nav">
+
+    <!-- 🏠 HOME -->
+    <button
+        type="button"
+        class="nav-item active"
+        onclick="showHome()"
+    >
+        <span>🏠</span>
+        <small>Home</small>
+    </button>
+
+    <!-- 🎬 REELS -->
+    <button
+        type="button"
+        class="nav-item"
+        onclick="openReelsScreen()"
+    >
+        <span>🎬</span>
+        <small>Reels</small>
+    </button>
+
+    <!-- 👤 FRIENDS -->
+    <button
+        type="button"
+        class="nav-item"
+        onclick="openFriends()"
+    >
+        <span>👤</span>
+        <small>Friends</small>
+    </button>
+
+    <!-- 💬 CHATS -->
+    <button
+        type="button"
+        class="nav-item"
+        onclick="newChat()"
+    >
+        <span>💬</span>
+        <small>Chats</small>
+    </button>
+
+    <!-- 🔔 NOTIFICATIONS -->
+    <button
+        type="button"
+        class="nav-item"
+        onclick="openNotifications()"
+    >
+        <span class="nav-notification-icon">
+            🔔
+            <span
+                id="bottomNotificationBadge"
+                class="bottom-notification-badge hidden"
+            >0</span>
+        </span>
+        <small>Notifications</small>
+    </button>
+
+
+</nav>
+</main>
+
+<!-- ==========================================
+     🇳🇬 FREE CHAT COMMUNITIES
+========================================== -->
+
+<section id="groupsScreen" class="groups-screen hidden">
+
+    <!-- HEADER -->
+    <header class="groups-topbar">
+        <div>
+            <span class="groups-eyebrow">YOUR PEOPLE. YOUR COMMUNITY.</span>
+            <h1>Communities <span>🇳🇬</span></h1>
+            <p>Connect, trade, and hang out with people across Nigeria.</p>
+        </div>
+
+        <button type="button" id="createGroupBtn" class="create-group-btn">
+            <span>＋</span> Create
+        </button>
+    </header>
+
+    <!-- SEARCH -->
+    <div class="groups-search">
+        <span>🔎</span>
+        <input
+            type="search"
+            id="groupSearchInput"
+            placeholder="Search groups, states, interests..."
+            autocomplete="off"
+        >
+    </div>
+
+    <!-- CATEGORY TABS -->
+    <div class="groups-categories" id="groupsCategories">
+
+        <button class="group-category active" data-category="all">
+            🌍 Explore
+        </button>
+
+        <button class="group-category" data-category="states">
+            🇳🇬 States
+        </button>
+
+        <button class="group-category" data-category="marketplace">
+            🛍️ Buy & Sell
+        </button>
+
+        <button class="group-category" data-category="hangout">
+            🎉 Hangout
+        </button>
+
+        <button class="group-category" data-category="custom">
+            👥 My Groups
+        </button>
+
+    </div>
+
+    <!-- FEATURED COMMUNITY -->
+    <div class="groups-featured">
+        <div class="featured-content">
+            <span class="featured-label">🇳🇬 THE NAIJA COMMUNITY</span>
+
+            <h2>Find your people.</h2>
+
+            <p>
+                Meet people from your state, discover local businesses,
+                and build communities around what you love.
+            </p>
+
+            <button type="button" id="exploreStatesBtn">
+                Explore communities →
+            </button>
+        </div>
+
+        <div class="featured-art">🌍</div>
+    </div>
+
+    <!-- SECTION TITLE -->
+    <div class="groups-section-heading">
+        <div>
+            <h2 id="groupsListTitle">Discover communities</h2>
+            <p id="groupsListSubtitle">Find a community that feels like home.</p>
+        </div>
+    </div>
+
+    <!-- COMMUNITY CARDS -->
+    <div id="groupsList" class="groups-list">
+
+        <article class="community-card">
+            <div class="community-card-icon state-icon">🇳🇬</div>
+
+            <div class="community-card-content">
+                <span class="community-tag">STATE COMMUNITY</span>
+                <h3>Find your state</h3>
+                <p>Connect with people from across Nigeria.</p>
+            </div>
+
+            <button type="button" class="community-open-btn" data-category="states">
+                Explore →
+            </button>
+        </article>
+
+        <article class="community-card">
+            <div class="community-card-icon market-icon">🛍️</div>
+
+            <div class="community-card-content">
+                <span class="community-tag">MARKETPLACE</span>
+                <h3>Buy & Sell</h3>
+                <p>Discover products and connect with buyers and sellers.</p>
+            </div>
+
+            <button type="button" class="community-open-btn" data-category="marketplace">
+                Explore →
+            </button>
+        </article>
+
+        <article class="community-card">
+            <div class="community-card-icon hangout-icon">🎉</div>
+
+            <div class="community-card-content">
+                <span class="community-tag">SOCIAL</span>
+                <h3>Hangout & Events</h3>
+                <p>Meet people with similar interests and share events.</p>
+            </div>
+
+            <button type="button" class="community-open-btn" data-category="hangout">
+                Explore →
+            </button>
+        </article>
+
+    </div>
+
+    <!-- CREATE GROUP MODAL -->
+    <div id="createGroupModal" class="create-group-modal hidden">
+
+        <div class="create-group-panel">
+
+            <div class="create-group-heading">
+                <div>
+                    <span class="groups-eyebrow">BUILD YOUR COMMUNITY</span>
+                    <h2>Create a group</h2>
+                </div>
+
+                <button
+                    type="button"
+                    id="closeCreateGroupBtn"
+                    class="close-create-group"
+                    aria-label="Close"
+                >✕</button>
+            </div>
+
+            <form id="createGroupForm">
+
+                <label for="newGroupName">Group name</label>
+
+                <input
+                    type="text"
+                    id="newGroupName"
+                    maxlength="60"
+                    placeholder="e.g. Ibadan Entrepreneurs"
+                    required
+                >
+
+                <label for="newGroupDescription">Description</label>
+
+                <textarea
+                    id="newGroupDescription"
+                    maxlength="300"
+                    placeholder="What is your group about?"
+                    rows="3"
+                ></textarea>
+
+                <label for="newGroupCategory">Category</label>
+
+                <select id="newGroupCategory" required>
+                    <option value="states">🇳🇬 State Community</option>
+                    <option value="marketplace">🛍️ Buying & Selling</option>
+                    <option value="hangout">🎉 Hangout & Events</option>
+                    <option value="custom" selected>👥 General Community</option>
+                </select>
+
+                <label for="newGroupState">State (optional)</label>
+
+                <select id="newGroupState">
+                    <option value="">Select a state</option>
+                    <option>Abia</option>
+                    <option>Adamawa</option>
+                    <option>Akwa Ibom</option>
+                    <option>Anambra</option>
+                    <option>Bauchi</option>
+                    <option>Bayelsa</option>
+                    <option>Benue</option>
+                    <option>Borno</option>
+                    <option>Cross River</option>
+                    <option>Delta</option>
+                    <option>Ebonyi</option>
+                    <option>Edo</option>
+                    <option>Ekiti</option>
+                    <option>Enugu</option>
+                    <option>Gombe</option>
+                    <option>Imo</option>
+                    <option>Jigawa</option>
+                    <option>Kaduna</option>
+                    <option>Kano</option>
+                    <option>Katsina</option>
+                    <option>Kebbi</option>
+                    <option>Kogi</option>
+                    <option>Kwara</option>
+                    <option>Lagos</option>
+                    <option>Nasarawa</option>
+                    <option>Niger</option>
+                    <option>Ogun</option>
+                    <option>Ondo</option>
+                    <option>Osun</option>
+                    <option>Oyo</option>
+                    <option>Plateau</option>
+                    <option>Rivers</option>
+                    <option>Sokoto</option>
+                    <option>Taraba</option>
+                    <option>Yobe</option>
+                    <option>Zamfara</option>
+                    <option>Federal Capital Territory (FCT)</option>
+                </select>
+
+                <label for="newGroupPrivacy">Who can join?</label>
+
+                <select id="newGroupPrivacy">
+                    <option value="public">🌍 Public — anyone can join</option>
+                    <option value="private">🔒 Private — invitation or approval</option>
+                </select>
+
+                <button type="submit" id="saveNewGroupBtn" class="save-group-btn">
+                    Create Community
+                </button>
+
+                <p id="createGroupMessage" class="create-group-message"></p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- GROUP CHAT WINDOW -->
+<section id="communityChatScreen" class="community-chat-screen hidden">
+
+    <header class="community-chat-header">
+        <button type="button" id="communityChatBackBtn">
+            ← Back
+        </button>
+
+        <div class="community-chat-heading">
+            <h2 id="communityChatTitle">Community Chat</h2>
+            <p id="communityChatSubtitle">Community conversation</p>
+        </div>
+        <div class="community-chat-actions">
+            <button type="button" id="communityMembersBtn">👥 Members</button>
+            <button type="button" id="communityInviteBtn">➕ Invite</button>
+        </div>
+    </header>
+
+    <section id="communityMembersPanel" class="community-members-panel hidden" aria-label="Community members">
+        <div class="community-members-panel-head">
+            <h3>Community members</h3>
+            <button type="button" id="communityMembersCloseBtn" aria-label="Close members">✕</button>
+        </div>
+        <p id="communityMembersCount">Loading members…</p>
+        <div id="communityMembersList"></div>
+    </section>
+
+    <div id="communityChatMessages" class="community-chat-messages">
+        <p class="community-chat-empty">
+            Welcome! Messages will appear here.
+        </p>
+    </div>
+
+    <form id="communityChatForm" class="community-chat-form">
+        <button type="button" class="community-media-button community-emoji-toggle" id="communityEmojiButton" aria-label="Choose emoji" title="Choose emoji" onclick="toggleCommunityEmojiPicker(event)">😊</button>
+
+        <input
+            type="text"
+            id="communityChatInput"
+            placeholder="Message"
+            maxlength="2000"
+            autocomplete="off"
+        >
+
+        <div class="community-attachment-wrap">
+            <button type="button" class="community-media-button community-attach-toggle" id="communityAttachButton" aria-label="Attach" title="Attach" onclick="toggleCommunityAttachmentMenu(event)">📎</button>
+            <div id="communityAttachmentMenu" class="community-attachment-menu hidden" role="menu" aria-label="Attachment options">
+                <button type="button" role="menuitem" onclick="chooseCommunityMedia()">🖼️ <span>Photos &amp; videos</span></button>
+                <button type="button" role="menuitem" onclick="chooseCommunityDocument()">📄 <span>Document</span></button>
+                <button type="button" role="menuitem" onclick="showCommunityFeatureNotice('Polls are coming soon.')">📊 <span>Poll</span></button>
+                <button type="button" role="menuitem" onclick="showCommunityFeatureNotice('Contact sharing is coming soon.')">👤 <span>Contact</span></button>
+            </div>
+        </div>
+
+        <button type="button" class="community-media-button community-camera-button" id="communityCameraButton" aria-label="Choose photo" title="Choose photo" onclick="chooseCommunityCameraPhoto()">📷</button>
+
+        <button type="button" class="community-media-button community-voice-button" onclick="toggleCommunityVoiceRecording()" id="communityVoiceButton" aria-label="Record voice note" title="Record voice note">🎙️</button>
+        <button type="submit" id="communityChatSendBtn" aria-label="Send message" title="Send message">➤</button>
+
+        <input type="file" id="communityMediaInput" accept="image/*,video/*" multiple hidden onchange="handleCommunityMediaSelected(event)">
+        <input type="file" id="communityDocumentInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip" hidden onchange="handleCommunityMediaSelected(event)">
+    </form>
+
+    <div id="communityEmojiPicker" class="community-emoji-picker hidden" role="group" aria-label="Choose an emoji">
+        <button type="button" onclick="insertCommunityEmoji('😀')">😀</button>
+        <button type="button" onclick="insertCommunityEmoji('😂')">😂</button>
+        <button type="button" onclick="insertCommunityEmoji('🥰')">🥰</button>
+        <button type="button" onclick="insertCommunityEmoji('😍')">😍</button>
+        <button type="button" onclick="insertCommunityEmoji('😊')">😊</button>
+        <button type="button" onclick="insertCommunityEmoji('😉')">😉</button>
+        <button type="button" onclick="insertCommunityEmoji('😎')">😎</button>
+        <button type="button" onclick="insertCommunityEmoji('😭')">😭</button>
+        <button type="button" onclick="insertCommunityEmoji('😡')">😡</button>
+        <button type="button" onclick="insertCommunityEmoji('🙏')">🙏</button>
+        <button type="button" onclick="insertCommunityEmoji('👏')">👏</button>
+        <button type="button" onclick="insertCommunityEmoji('👋')">👋</button>
+        <button type="button" onclick="insertCommunityEmoji('❤️')">❤️</button>
+        <button type="button" onclick="insertCommunityEmoji('💚')">💚</button>
+        <button type="button" onclick="insertCommunityEmoji('🔥')">🔥</button>
+        <button type="button" onclick="insertCommunityEmoji('🎉')">🎉</button>
+        <button type="button" onclick="insertCommunityEmoji('👍')">👍</button>
+        <button type="button" onclick="insertCommunityEmoji('👎')">👎</button>
+        <button type="button" onclick="insertCommunityEmoji('💯')">💯</button>
+        <button type="button" onclick="insertCommunityEmoji('✨')">✨</button>
+    </div>
+
+    <p id="communityChatNotice" role="status"></p>
+
+</section>
+
+
+
+<!-- FREE CHAT REELS SCREEN -->
+<section id="reelsScreen" class="screen hidden">
+
+    <header class="screen-header">
+        <button type="button" id="reelsBackBtn">
+            ← Back
+        </button>
+        <h2>🎬 FREE CHAT Reels</h2>
+    </header>
+
+    <div class="reels-upload-box">
+
+        <h3>✨ Create a Reel</h3>
+        <p>Share a special moment with your friends.</p>
+
+        <input
+            type="file"
+            id="reelVideoInput"
+            accept="video/mp4,video/webm,video/quicktime"
+            hidden
+        >
+
+        <button
+            type="button"
+            id="selectReelVideoBtn"
+            class="reel-upload-button"
+        >
+            🎥 Choose a video
+        </button>
+
+        <div
+            id="reelPreviewContainer"
+            class="reel-preview-container"
+            hidden
+        >
+            <video
+                id="reelVideoPreview"
+                controls
+                playsinline
+                preload="metadata"
+                style="width:100%;max-width:400px;border-radius:12px;margin-top:15px;"
+            ></video>
+
+            <textarea
+                id="reelCaption"
+                placeholder="Write a caption for your Reel..."
+                maxlength="500"
+                rows="3"
+            ></textarea>
+
+            <button
+                type="button"
+                id="publishReelBtn"
+            >
+                ⬆️ Upload Reel
+            </button>
+        </div>
+
+        <p id="reelUploadStatus" role="status"></p>
+
+    </div>
+
+    <div id="reelsFeed" class="reels-feed">
+        <div class="reels-empty-state">
+            <div class="reels-icon">🎬</div>
+            <h3>FREE CHAT Reels</h3>
+            <p>Your videos will appear here.</p>
+        </div>
+    </div>
+
+</section>
+
+<!-- ==========================================
+     ⚙️ FREE CHAT — SETTINGS & PRIVACY
+     MUST BE OUTSIDE homeScreen
+========================================== -->
+
+<section id="settingsScreen" class="settings-screen hidden">
+
+    <header class="settings-header">
+
+        <button
+            type="button"
+            class="settings-back-btn"
+            onclick="closeSettings()"
+        >
+            ←
+        </button>
+
+<div>
+    <h2 data-i18n="settings_privacy">Settings & privacy</h2>
+    <p data-i18n="settings_subtitle">Manage your FREE CHAT experience</p>
+</div>
+
+    </header>
+
+
+    <!-- =========================
+         ACCOUNT
+    ========================== -->
+
+    <div class="settings-group">
+
+        <h3>ACCOUNT</h3>
+
+        <button
+            type="button"
+            class="settings-row"
+            onclick="openProfileFromSettings()"
+        >
+            <span class="settings-row-icon">👤</span>
+
+            <span class="settings-row-content">
+                <strong>Profile</strong>
+                <small>View and manage your profile</small>
+            </span>
+
+            <span class="settings-row-arrow">›</span>
+        </button>
+
+
+        <button
+            type="button"
+            class="settings-row"
+            onclick="openEditProfile()"
+        >
+            <span class="settings-row-icon">✏️</span>
+
+            <span class="settings-row-content">
+                <strong>Edit Profile</strong>
+                <small>Change your username, photo and information</small>
+            </span>
+
+            <span class="settings-row-arrow">›</span>
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         PRIVACY
+    ========================== -->
+
+    <div class="settings-group">
+
+        <h3>PRIVACY</h3>
+
+
+        <div class="settings-row settings-toggle-row">
+
+            <span class="settings-row-icon">🟢</span>
+
+            <span class="settings-row-content">
+                <strong>Online Status</strong>
+                <small>Show when you're online</small>
+            </span>
+
+            <label class="settings-switch">
+
+                <input
+                    type="checkbox"
+                    id="onlineStatusToggle"
+                    checked
+                    onchange="toggleOnlineStatus(this)"
+                >
+
+                <span class="settings-slider"></span>
+
+            </label>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="settings-row"
+            onclick="openPrivacySettings()"
+        >
+
+            <span class="settings-row-icon">🔒</span>
+
+            <span class="settings-row-content">
+                <strong>Privacy Settings</strong>
+                <small>Control who can see and contact you</small>
+            </span>
+
+            <span class="settings-row-arrow">›</span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="settings-row"
+            onclick="openBlockedUsers()"
+        >
+
+            <span class="settings-row-icon">🚫</span>
+
+            <span class="settings-row-content">
+                <strong>Blocked Users</strong>
+                <small>Manage people you've blocked</small>
+            </span>
+
+            <span class="settings-row-arrow">›</span>
+
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         MESSAGES
+    ========================== -->
+
+    <div class="settings-group">
+
+        <h3>MESSAGES</h3>
+
+
+        <button
+            type="button"
+            class="settings-row"
+            onclick="openMessagePrivacy()"
+        >
+
+            <span class="settings-row-icon">💬</span>
+
+            <span class="settings-row-content">
+                <strong>Message Privacy</strong>
+                <small>Choose who can message you</small>
+            </span>
+
+            <span class="settings-row-arrow">›</span>
+
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         NOTIFICATIONS
+    ========================== -->
+
+    <div class="settings-group">
+
+        <h3>NOTIFICATIONS</h3>
+
+
+        <div class="settings-row settings-toggle-row">
+
+            <span class="settings-row-icon">🔔</span>
+
+            <span class="settings-row-content">
+                <strong>Notifications</strong>
+                <small>Receive FREE CHAT notifications</small>
+            </span>
+
+            <label class="settings-switch">
+
+                <input
+                    type="checkbox"
+                    id="notificationsToggle"
+                    checked
+                    onchange="toggleNotifications(this)"
+                >
+
+                <span class="settings-slider"></span>
+
+            </label>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="settings-row"
+            onclick="openNotificationSettings()"
+        >
+
+            <span class="settings-row-icon">⚙️</span>
+
+            <span class="settings-row-content">
+                <strong>Notification Settings</strong>
+                <small>Manage your notification preferences</small>
+            </span>
+
+            <span class="settings-row-arrow">›</span>
+
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         SECURITY
+    ========================== -->
+
+    <div class="settings-group">
+
+        <h3>SECURITY</h3>
+
+
+        <button
+            type="button"
+            class="settings-row"
+            onclick="openSecuritySettings()"
+        >
+
+            <span class="settings-row-icon">🛡️</span>
+
+            <span class="settings-row-content">
+                <strong>Security</strong>
+                <small>Protect your account</small>
+            </span>
+
+            <span class="settings-row-arrow">›</span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="settings-row"
+            onclick="changePassword()"
+        >
+
+            <span class="settings-row-icon">🔑</span>
+
+            <span class="settings-row-content">
+                <strong>Change Password</strong>
+                <small>Update your account password</small>
+            </span>
+
+            <span class="settings-row-arrow">›</span>
+
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         APP
+    ========================== -->
+
+    <div class="settings-group">
+
+        <h3>APP</h3>
+
+
+        <button
+            type="button"
+            class="settings-row"
+            onclick="openAppearanceSettings()"
+        >
+
+            <span class="settings-row-icon">🎨</span>
+
+            <span class="settings-row-content">
+                <strong>Appearance</strong>
+                <small>Customize how FREE CHAT looks</small>
+            </span>
+
+            <span class="settings-row-arrow">›</span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="settings-row"
+            onclick="openLanguageSettings()"
+        >
+
+            <span class="settings-row-icon">🌐</span>
+
+            <span class="settings-row-content">
+                <strong>Language</strong>
+                <small>Choose your preferred language</small>
+            </span>
+
+            <span class="settings-row-arrow">›</span>
+
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         SUPPORT
+    ========================== -->
+
+    <div class="settings-group">
+
+        <h3>SUPPORT</h3>
+
+
+        <button
+            type="button"
+            class="settings-row"
+            onclick="showAboutFreeChat()"
+        >
+
+            <span class="settings-row-icon">ℹ️</span>
+
+            <span class="settings-row-content">
+                <strong>About FREE CHAT</strong>
+                <small>Learn more about the app</small>
+            </span>
+
+            <span class="settings-row-arrow">›</span>
+
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         LOG OUT
+    ========================== -->
+
+    <div class="settings-group settings-logout-group">
+
+        <button
+            type="button"
+            class="settings-row settings-logout-row"
+            onclick="logout()"
+        >
+
+            <span class="settings-row-icon">🚪</span>
+
+            <span class="settings-row-content">
+                <strong>Log Out</strong>
+                <small>Sign out of your FREE CHAT account</small>
+            </span>
+
+            <span class="settings-row-arrow">›</span>
+
+        </button>
+
+    </div>
+
+
+    <footer class="settings-footer">
+
+        <p>FREE CHAT</p>
+        <small>Connect. Chat. Stay close.</small>
+        <small>Version 1.0</small>
+
+    </footer>
+
+</section>
+
+<!-- =====================================================
+     CONTACTS
+===================================================== -->
+
+<section
+    id="contactsScreen"
+    class="contacts-screen hidden"
+>
+
+
+    <header class="contacts-header">
+
+        <button
+            type="button"
+            onclick="showHome()"
+        >
+            ←
+        </button>
+
+
+        <div>
+
+            <h2>
+                New Chat
+            </h2>
+
+            <p>
+                Find people on FREE CHAT
+            </p>
+
+        </div>
+
+    </header>
+
+
+    <div class="user-search-box">
+
+        <span>
+            🔍
+        </span>
+
+        <input
+            type="search"
+            id="userSearchInput"
+            placeholder="Search username..."
+            oninput="searchUsers()"
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <div
+        id="usersList"
+        class="users-list"
+    >
+
+        <div class="users-loading">
+            Loading users...
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ==========================================
+     👥 FRIENDS SCREEN
+========================================== -->
+
+<section
+    id="friendsScreen"
+    class="friends-screen hidden"
+>
+
+    <!-- FRIENDS HEADER -->
+
+    <header class="friends-header">
+
+        <button
+            type="button"
+            onclick="showHome()"
+            class="friends-back-btn"
+        >
+            ←
+        </button>
+
+        <div class="friends-title">
+
+            <h2>
+                👥 Friends
+            </h2>
+
+            <p>
+                Connect with people on FREE CHAT
+            </p>
+
+        </div>
+
+    </header>
+
+
+    <!-- FRIEND TABS -->
+
+    <div class="friends-tabs">
+
+        <button
+            type="button"
+            class="friend-tab active"
+            onclick="showFriendsTab('friends')"
+            id="friendsTabBtn"
+        >
+            👥 Friends
+        </button>
+
+
+        <button
+            type="button"
+            class="friend-tab"
+            onclick="showFriendsTab('suggestions')"
+            id="suggestionsTabBtn"
+        >
+            ✨ Suggestions
+        </button>
+
+
+        <button
+            type="button"
+            class="friend-tab"
+            onclick="showFriendsTab('add')"
+            id="addFriendsTabBtn"
+        >
+            ➕ Add Friends
+        </button>
+
+
+        <button
+            type="button"
+            class="friend-tab"
+            onclick="showFriendsTab('confirm')"
+            id="confirmTabBtn"
+        >
+            🤝 Confirm
+            <span
+                id="friendRequestBadge"
+                class="friend-request-badge hidden"
+            >
+                0
+            </span>
+        </button>
+
+    </div>
+
+
+    <!-- ======================================
+         👥 MY FRIENDS
+    ======================================= -->
+
+    <div
+        id="friendsTab"
+        class="friends-tab-content"
+    >
+
+        <div
+            id="friendsList"
+            class="friends-list"
+        >
+
+            <div class="friends-loading">
+                Loading friends...
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================
+         ✨ SUGGESTIONS
+    ======================================= -->
+
+    <div
+        id="suggestionsTab"
+        class="friends-tab-content hidden"
+    >
+
+        <div class="friends-section-title">
+
+            <h3>
+                ✨ People you may know
+            </h3>
+
+            <p>
+                Discover people you might want to connect with.
+            </p>
+
+        </div>
+
+
+        <div
+            id="suggestionsList"
+            class="friends-list"
+        >
+
+            <div class="friends-loading">
+                Loading suggestions...
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================
+         ➕ ADD FRIENDS
+    ======================================= -->
+
+    <div
+        id="addFriendsTab"
+        class="friends-tab-content hidden"
+    >
+
+        <div class="friends-section-title">
+
+            <h3>
+                ➕ Find Friends
+            </h3>
+
+            <p>
+                Search for people by username.
+            </p>
+
+        </div>
+
+
+        <div class="friends-search-box">
+
+            <span>
+                🔍
+            </span>
+
+            <input
+                type="search"
+                id="friendsSearchInput"
+                placeholder="Search username..."
+                oninput="searchFriends()"
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div
+            id="addFriendsList"
+            class="friends-list"
+        >
+
+            <div class="friends-empty">
+                🔍 Search for someone to add as a friend.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================
+         🤝 CONFIRM REQUESTS
+    ======================================= -->
+
+    <div
+        id="confirmTab"
+        class="friends-tab-content hidden"
+    >
+
+        <div class="friends-section-title">
+
+            <h3>
+                🤝 Friend Requests
+            </h3>
+
+            <p>
+                People who want to be your friend.
+            </p>
+
+        </div>
+
+
+        <div
+            id="friendRequestsList"
+            class="friends-list"
+        >
+
+            <div class="friends-loading">
+                Loading requests...
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     REAL CHAT
+===================================================== -->
+
+<section
+    class="chat-screen hidden"
+    id="chatScreen"
+>
+
+    <!-- ================================
+         CHAT HEADER
+    ================================= -->
+
+    <header class="chat-screen-header">
+
+        <button
+            type="button"
+            class="chat-back-btn"
+            onclick="closeRealChat()"
+        >
+            ←
+        </button>
+
+
+        <img
+            id="chatAvatar"
+            class="chat-header-avatar"
+            src="https://i.pravatar.cc/100?img=12"
+            alt="User"
+        >
+
+
+        <div class="chat-header-info">
+
+            <h2 id="chatUsername">
+                FREE CHAT USER
+            </h2>
+
+            <span id="chatStatus">
+                Offline
+            </span>
+
+        </div>
+
+
+        <!-- THREE DOT MENU -->
+
+        <button
+            type="button"
+            class="chat-more-btn"
+            onclick="toggleChatMoreMenu()"
+            aria-label="Chat options"
+        >
+            ⋮
+        </button>
+
+    </header>
+
+
+    <!-- ================================
+         CHAT MORE MENU
+    ================================= -->
+
+    <div
+        id="chatMoreMenu"
+        class="chat-more-menu hidden"
+    >
+
+        <button
+            type="button"
+            onclick="reportChatUser()"
+        >
+            🚩
+            <span>Report</span>
+        </button>
+
+
+        <button
+            type="button"
+            id="chatBlockButton"
+            onclick="toggleChatBlock()"
+        >
+            🚫
+            <span>Block user</span>
+        </button>
+
+
+        <button
+            type="button"
+            onclick="clearCurrentChat()"
+        >
+            🗑️
+            <span>Clear chat</span>
+        </button>
+
+    </div>
+
+<div id="typingIndicator" class="typing-indicator hidden">
+    <span id="typingIndicatorText">typing...</span>
+    <span class="typing-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+    </span>
+</div>
+
+    <!-- ================================
+         MESSAGES
+    ================================= -->
+
+    <main
+        class="messages-container"
+        id="messagesContainer"
+    >
+
+        <div
+            class="no-messages"
+            id="noMessages"
+        >
+
+            <div>
+                💬
+            </div>
+
+            <h3>
+                No messages yet
+            </h3>
+
+            <p>
+                Say hello 👋
+            </p>
+
+        </div>
+
+    </main>
+
+
+    <!-- ================================
+         RECORDING BAR
+    ================================= -->
+<div
+    id="voiceRecordingBar"
+    class="voice-recording-bar hidden"
+>
+
+    <button
+        type="button"
+        onclick="cancelVoiceRecording()"
+        class="voice-cancel-button"
+    >
+        ✕
+    </button>
+
+    <div class="voice-recording-indicator">
+        <span class="voice-recording-dot"></span>
+
+        <span>
+            Recording
+        </span>
+    </div>
+
+    <span id="voiceRecordingTimer">
+        00:00
+    </span>
+
+    <button
+        type="button"
+        onclick="stopVoiceRecording()"
+        class="voice-send-button"
+    >
+        ➤
+    </button>
+
+</div>
+    <!-- ================================
+         ATTACHMENT MENU
+    ================================= -->
+
+    <div
+        id="chatAttachmentMenu"
+        class="chat-attachment-menu hidden"
+    >
+
+        <button
+            type="button"
+            onclick="openPhotoVideoPicker()"
+        >
+            <span class="attachment-icon">
+                🖼️
+            </span>
+
+            <span>
+                Photos & videos
+            </span>
+        </button>
+
+
+        <button
+            type="button"
+            onclick="openDocumentPicker()"
+        >
+            <span class="attachment-icon">
+                📄
+            </span>
+
+            <span>
+                Document
+            </span>
+        </button>
+
+
+        <button
+            type="button"
+            onclick="openPollCreator()"
+        >
+            <span class="attachment-icon">
+                📊
+            </span>
+
+            <span>
+                Poll
+            </span>
+        </button>
+
+
+        <button
+            type="button"
+            onclick="openContactPicker()"
+        >
+            <span class="attachment-icon">
+                👤
+            </span>
+
+            <span>
+                Contact
+            </span>
+        </button>
+
+    </div>
+
+
+    <!-- ================================
+         HIDDEN FILE INPUTS
+    ================================= -->
+
+    <input
+        type="file"
+        id="chatMediaInput"
+        accept="image/*,video/*"
+        multiple
+        hidden
+        onchange="handleChatMediaSelected(event)"
+    >
+
+
+    <input
+        type="file"
+        id="chatDocumentInput"
+        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar"
+        multiple
+        hidden
+        onchange="handleChatDocumentsSelected(event)"
+    >
+
+
+    <!-- ================================
+         MESSAGE INPUT
+    ================================= -->
+
+    <form
+        id="messageForm"
+        class="message-input-area"
+
+    >
+
+        <!-- ATTACHMENT -->
+
+        <button
+            type="button"
+            class="chat-attach-btn"
+            onclick="toggleChatAttachmentMenu()"
+            aria-label="Attach"
+        >
+            📎
+        </button>
+
+
+        <!-- MESSAGE -->
+
+        <textarea
+            id="messageInput"
+            placeholder="Type a message..."
+            rows="1"
+            maxlength="2000"
+            autocomplete="off"
+        ></textarea>
+
+
+        <!-- MICROPHONE -->
+
+<button
+    id="chatMicButton"
+    type="button"
+    onclick="startVoiceRecording()"
+>
+    🎙️
+</button>
+
+        <!-- SEND -->
+
+        <button
+            type="submit"
+            class="send-message-btn"
+        >
+            ➤
+        </button>
+
+    </form>
+
+</section>
+<!-- ==========================================
+     ➕ QUICK ACTION MENU
+========================================== -->
+
+<div
+    id="quickMenu"
+    class="quick-menu hidden"
+>
+
+    <button
+        type="button"
+        onclick="quickCreatePost()"
+    >
+        📝
+        <span>Create Post</span>
+    </button>
+
+
+    <button
+        type="button"
+        onclick="quickNewChat()"
+    >
+        💬
+        <span>New Chat</span>
+    </button>
+
+
+    <button
+        type="button"
+        onclick="quickAddFriend()"
+    >
+        👤
+        <span>Add Friend</span>
+    </button>
+
+</div>
+
+
+
+<!-- =====================================================
+     SUPABASE
+===================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
+<script src="script.js"></script>
+<script src="communities.js"></script>
+
+
+<script>
+
+/* =====================================================
+   SMALL HOME HELPERS
+===================================================== */
+
+function focusPostInput() {
+
+    const input =
+        document.getElementById("postContent");
+
+    if (!input) return;
+
+    input.focus();
+
+}
+
+
+function previewPostImage(event) {
+    const file = event?.target?.files?.[0];
+    const preview = document.getElementById("postImagePreview");
+    if (!preview) return;
+    if (!file) { preview.innerHTML = ""; preview.classList.add("hidden"); return; }
+    const isImage = file.type.startsWith("image/");
+    const isVideo = file.type.startsWith("video/");
+    if (!isImage && !isVideo) { alert("Please choose an image or video file."); event.target.value = ""; preview.innerHTML = ""; preview.classList.add("hidden"); return; }
+    const maxBytes = isVideo ? 100 * 1024 * 1024 : 15 * 1024 * 1024;
+    if (file.size > maxBytes) { alert(isVideo ? "Please choose a video smaller than 100 MB." : "Please choose an image smaller than 15 MB."); event.target.value = ""; preview.innerHTML = ""; preview.classList.add("hidden"); return; }
+    const localUrl = URL.createObjectURL(file);
+    const mediaMarkup = isVideo ? `<video class="post-composer-video-preview" src="${localUrl}" controls playsinline preload="metadata"></video>` : `<img src="${localUrl}" alt="Photo preview">`;
+    preview.innerHTML = `${mediaMarkup}<div class="post-media-file-label">${isVideo ? "🎥 Video selected" : "📷 Photo selected"} · ${escapeHTML(file.name)}</div><button type="button" class="remove-post-image" onclick="removePostImage()" aria-label="Remove selected media">✕</button>`;
+    preview.classList.remove("hidden");
+}
+
+function removePostImage() {
+
+    const input =
+        document.getElementById("postImageInput");
+
+    const preview =
+        document.getElementById("postImagePreview");
+
+
+    if (input) {
+        input.value = "";
+    }
+
+
+    if (preview) {
+
+        preview.innerHTML = "";
+
+        preview.classList.add("hidden");
+
+    }
+
+}
+function changeFeedTab(
+    tab,
+    button
+) {
+
+    document
+        .querySelectorAll(".feed-tabs button")
+        .forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+    if (button) {
+        button.classList.add("active");
+    }
+
+    console.log(
+        "Feed tab:",
+        tab
+    );
+}
+</script>
+
+<!-- ==========================================
+     ☰ FREE CHAT — MAIN MENU
+========================================== -->
+
+<section id="mainMenuScreen" class="fc-menu-screen hidden">
+
+    <!-- TOP BAR -->
+    <header class="fc-menu-header">
+
+        <button
+            type="button"
+            class="fc-menu-header-btn"
+            onclick="closeMainMenu()"
+        >
+            ←
+        </button>
+
+        <div class="fc-menu-heading">
+        <h2 data-i18n="menu_title">Menu</h2>
+<p data-i18n="menu_subtitle">Everything in one place</p>
+            
+        </div>
+
+        <button
+            type="button"
+            class="fc-menu-header-btn"
+            onclick="focusMenuSearch()"
+        >
+            🔍
+        </button>
+
+    </header>
+
+
+    <!-- PROFILE -->
+    <div
+        class="fc-menu-profile"
+        onclick="openProfileFromMenu()"
+    >
+
+        <img
+            id="menuProfileAvatar"
+            src="https://i.pravatar.cc/150?img=12"
+            alt="Profile"
+        >
+
+        <div class="fc-menu-profile-info">
+
+            <strong id="menuProfileUsername">
+                FREE CHAT
+            </strong>
+
+            <span>
+                View your profile
+            </span>
+
+        </div>
+
+        <span class="fc-menu-profile-arrow">
+            ▼
+        </span>
+
+    </div>
+
+
+    <!-- INVITE FRIENDS -->
+    <button
+        type="button"
+        class="fc-menu-invite"
+        onclick="inviteFriends()"
+    >
+
+        <span class="fc-menu-invite-icon">
+            ❤️
+        </span>
+
+        <span>
+            Invite friends
+        </span>
+
+    </button>
+
+
+    <!-- SHORTCUTS -->
+    <div class="fc-menu-section">
+
+        <h3>SHORTCUTS</h3>
+
+
+        <div class="fc-menu-grid">
+
+
+            <!-- MESSAGES -->
+            <button
+                type="button"
+                class="fc-menu-grid-item"
+                onclick="openChatsFromMenu()"
+            >
+
+                <span class="fc-menu-grid-icon">
+                    💬
+                </span>
+
+                <span>
+                    Messages
+                </span>
+
+            </button>
+
+
+            <!-- GROUPS -->
+            <button
+                type="button"
+                class="fc-menu-grid-item"
+                onclick="openGroups()"
+            >
+
+                <span class="fc-menu-grid-icon">
+                    👥
+                </span>
+
+                <span>
+                    Groups
+                </span>
+
+            </button>
+
+
+            <!-- FRIENDS -->
+            <button
+                type="button"
+                class="fc-menu-grid-item"
+                onclick="openFriendsFromMenu()"
+            >
+
+                <span class="fc-menu-grid-icon">
+                    🧑‍🤝‍🧑
+                </span>
+
+                <span>
+                    Friends
+                </span>
+
+            </button>
+
+
+           <button
+    type="button"
+    class="nav-item"
+    onclick="openReelsScreen()"
+>
+    <span>🎬</span>
+    <small>Reels</small>
+</button>
+
+            <!-- MARKETPLACE -->
+            <button
+                type="button"
+                class="fc-menu-grid-item"
+                onclick="openMarketplace()"
+            >
+
+                <span class="fc-menu-grid-icon">
+                    🛍️
+                </span>
+
+                <span>
+                    Marketplace
+                </span>
+
+            </button>
+
+
+            <!-- AI -->
+            <button
+                type="button"
+                class="fc-menu-grid-item"
+                onclick="openFreeChatAI()"
+            >
+
+                <span class="fc-menu-grid-icon">
+                    ✨
+                </span>
+
+                <span>
+                    FREE CHAT AI
+                </span>
+
+            </button>
+
+
+            <!-- SAVED -->
+            <button
+                type="button"
+                class="fc-menu-grid-item"
+                onclick="openSavedPosts()"
+            >
+
+                <span class="fc-menu-grid-icon">
+                    🔖
+                </span>
+
+                <span>
+                    Saved
+                </span>
+
+            </button>
+
+
+            <!-- MEMORIES -->
+            <button
+                type="button"
+                class="fc-menu-grid-item"
+                onclick="openMemories()"
+            >
+
+                <span class="fc-menu-grid-icon">
+                    🕐
+                </span>
+
+                <span>
+                    Memories
+                </span>
+
+            </button>
+
+
+            <!-- BIRTHDAYS -->
+            <button
+                type="button"
+                class="fc-menu-grid-item"
+                onclick="openBirthdays()"
+            >
+
+                <span class="fc-menu-grid-icon">
+                    🎁
+                </span>
+
+                <span>
+                    Birthdays
+                </span>
+
+            </button>
+
+
+            <!-- EVENTS -->
+            <button
+                type="button"
+                class="fc-menu-grid-item"
+                onclick="openEvents()"
+            >
+
+                <span class="fc-menu-grid-icon">
+                    📅
+                </span>
+
+                <span>
+                    Events
+                </span>
+
+            </button>
+
+
+            <!-- VERIFIED -->
+            <button
+                type="button"
+                class="fc-menu-grid-item"
+                onclick="openVerification()"
+            >
+
+                <span class="fc-menu-grid-icon">
+                    ✓
+                </span>
+
+                <span>
+                    Verification
+                </span>
+
+            </button>
+
+
+            <!-- MOBILE CENTER -->
+            <button
+                type="button"
+                class="fc-menu-grid-item"
+                onclick="openMobileCenter()"
+            >
+
+                <span class="fc-menu-grid-icon">
+                    📡
+                </span>
+
+                <span>
+                    Mobile Center
+                </span>
+
+            </button>
+
+
+            <!-- FEEDS -->
+            <button
+                type="button"
+                class="fc-menu-grid-item"
+                onclick="openFeeds()"
+            >
+
+                <span class="fc-menu-grid-icon">
+                    📰
+                </span>
+
+                <span>
+                    Feeds
+                </span>
+
+            </button>
+
+
+            <!-- PHOTO -->
+            <button
+                type="button"
+                class="fc-menu-grid-item"
+                onclick="openPhotos()"
+            >
+
+                <span class="fc-menu-grid-icon">
+                    📸
+                </span>
+
+                <span>
+                    Photos
+                </span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- SETTINGS -->
+    <div class="fc-menu-bottom-section">
+
+        <button
+            type="button"
+            class="fc-menu-row"
+            onclick="openSettings()"
+        >
+
+            <span class="fc-menu-row-icon">
+                ⚙️
+            </span>
+
+            <span class="fc-menu-row-text">
+                <strong data-i18n="settings_privacy">Settings & privacy</strong>
+<small data-i18n="manage_account">Manage your account</small>
+            </span>
+
+            <span class="fc-menu-row-arrow">
+                ⌄
+            </span>
+
+        </button>
+
+
+        <!-- HELP -->
+        <button
+            type="button"
+            class="fc-menu-row"
+            onclick="openHelpSupport()"
+        >
+
+            <span class="fc-menu-row-icon">
+                ❓
+            </span>
+
+            <span class="fc-menu-row-text">
+                <strong>Help & support</strong>
+                <small>Get help with FREE CHAT</small>
+            </span>
+
+            <span class="fc-menu-row-arrow">
+                ⌄
+            </span>
+
+        </button>
+
+
+        <!-- ADD ACCOUNT -->
+        <button
+            type="button"
+            class="fc-menu-row"
+            onclick="addAccount()"
+        >
+
+            <span class="fc-menu-row-icon">
+                👤
+            </span>
+
+            <span class="fc-menu-row-text">
+
+                <strong>
+                    Add account
+                </strong>
+
+                <small>
+                    Add another account
+                </small>
+
+            </span>
+
+            <span class="fc-menu-row-arrow">
+                ›
+            </span>
+
+        </button>
+
+
+        <!-- LOGOUT -->
+        <button
+            type="button"
+            class="fc-menu-row fc-menu-logout"
+            onclick="logoutFromMenu()"
+        >
+
+            <span class="fc-menu-row-icon">
+                🚪
+            </span>
+
+            <span class="fc-menu-row-text">
+
+                <strong>
+                    Log out
+                </strong>
+
+            </span>
+
+            <span class="fc-menu-row-arrow">
+                ›
+            </span>
+
+        </button>
+
+    </div>
+
+
+    <!-- FOOTER -->
+    <div class="fc-menu-footer">
+
+        <strong>FREE CHAT</strong>
+
+        <span>
+            Connect. Chat. Stay close.
+        </span>
+
+        <small>
+            Version 1.0
+        </small>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     👤 OTHER USER PROFILE
+===================================================== -->
+
+<section
+    id="userProfileScreen"
+    class="user-profile-screen hidden"
+>
+
+    <!-- HEADER -->
+
+    <header class="user-profile-header">
+
+        <button
+            type="button"
+            onclick="closeUserProfile()"
+            class="user-profile-back"
+        >
+            ←
+        </button>
+
+        <h2>Profile</h2>
+
+        <button
+            type="button"
+            onclick="closeUserProfile()"
+            class="user-profile-close"
+        >
+            ✕
+        </button>
+
+    </header>
+
+
+    <!-- PROFILE -->
+
+    <div class="user-profile-content">
+
+        <!-- AVATAR -->
+
+        <img
+            id="userProfileAvatar"
+            class="user-profile-avatar"
+            src="https://i.pravatar.cc/160?img=12"
+            alt="Profile"
+        >
+
+
+        <!-- NAME -->
+
+        <h1 id="userProfileUsername">
+            FREE CHAT USER
+        </h1>
+
+
+        <!-- EMAIL -->
+
+        <p id="userProfileUsernameHandle">
+    @username
+</p>
+
+
+        <!-- STATS -->
+
+        <div class="user-profile-stats">
+
+            <div class="user-profile-stat">
+
+                <strong id="userProfilePostCount">
+                    0
+                </strong>
+
+                <span>Posts</span>
+
+            </div>
+
+
+<button
+    type="button"
+    class="user-profile-stat clickable-profile-stat"
+    id="userProfileFollowersButton"
+>
+    <strong id="userProfileFollowersCount">0</strong>
+    <span>Followers</span>
+</button>
+
+<button
+    type="button"
+    class="user-profile-stat clickable-profile-stat"
+    id="userProfileFollowingButton"
+>
+    <strong id="userProfileFollowingCount">0</strong>
+    <span>Following</span>
+</button>
+
+            <div class="user-profile-stat">
+
+                <strong id="userProfileFriendCount">
+                    0
+                </strong>
+
+                <span>Friends</span>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTION BUTTONS -->
+
+        <div class="user-profile-actions">
+
+            <button
+                type="button"
+                id="userProfileFriendButton"
+                class="user-profile-add-btn"
+            >
+                ➕ Add Friend
+            </button>
+
+
+            <button
+                type="button"
+                id="userProfileMessageButton"
+                class="user-profile-message-btn"
+            >
+                💬 Message
+            </button>
+
+        </div>
+
+
+        <!-- PROFILE CONTENT TABS -->
+        <div class="user-profile-tabs">
+
+            <button
+                type="button"
+                id="userProfilePostsTab"
+                class="user-profile-tab active"
+                aria-selected="true"
+            >
+                📝 Posts
+            </button>
+
+            <button
+                type="button"
+                id="userProfileReelsTab"
+                class="user-profile-tab"
+                aria-selected="false"
+            >
+                🎬 Reels
+            </button>
+
+        </div>
+
+        <!-- POSTS TAB CONTENT -->
+        <div class="user-profile-posts-section">
+
+            <div id="userProfilePosts">
+                <div class="user-profile-loading">
+                    Loading posts...
+                </div>
+            </div>
+
+        </div>
+
+        <!-- REELS TAB CONTENT -->
+        <div class="user-profile-reels-section" hidden>
+
+            <h2>🎬 Creator Reels</h2>
+
+            <div id="userProfileReels" class="user-profile-reels-grid">
+                <p class="user-profile-loading">Loading Reels...</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ==========================================
+     🔔 NOTIFICATIONS SCREEN
+========================================== -->
+
+<section
+    id="notificationsScreen"
+    class="notifications-screen hidden"
+>
+
+    <!-- HEADER -->
+
+    <header class="notifications-page-header">
+
+        <button
+            type="button"
+            class="notifications-back-btn"
+            onclick="closeNotifications()"
+        >
+            ←
+        </button>
+
+        <div>
+
+            <h2>
+                🔔 Notifications
+            </h2>
+
+            <p>
+                Your latest activity
+            </p>
+
+        </div>
+
+    </header>
+
+
+    <!-- NOTIFICATIONS -->
+
+    <div
+        id="notificationsList"
+        class="notifications-page-list"
+    >
+
+        <div class="notifications-loading">
+            Loading notifications...
+        </div>
+
+    </div>
+
+</section>
+
+</body>
+</html>

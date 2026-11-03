@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FREE CHAT | Admin Support</title>
+    <link rel="stylesheet" href="admin-support.css">
+</head>
+<body>
+    <header class="admin-header">
+        <div>
+            <h1>🛡️ FREE CHAT</h1>
+            <p>Admin Support Center</p>
+        </div>
+        <button id="backButton" class="back-button" type="button">
+            ← Back
+        </button>
+    </header><main class="admin-container">
+    <section class="welcome-card">
+        <h2>Support Inbox</h2>
+        <p>Manage user requests and reply to messages.</p>
+        <button id="refreshButton" class="primary-button" type="button">
+            🔄 Refresh Inbox
+        </button>
+        <p id="inboxStatus" role="status" aria-live="polite">
+            Checking administrator access...
+        </p>
+    </section>
+
+    <section id="supportRequests" class="support-list"
+        aria-label="Support requests"></section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="admin-support.js"></script>
+
+</body>
+</html>
