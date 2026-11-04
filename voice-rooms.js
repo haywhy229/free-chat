@@ -196,6 +196,9 @@
         const changedId = String(payload.new?.user_id || payload.old?.user_id || '');
         if (!changedId || changedId === String(currentUser.id)) return;
         if (payload.eventType === 'DELETE') closePeer(changedId);
+        // Seat occupancy is derived from voice_room_members.role.
+        await renderSeats();
+        await updateMemberCount();
         if (micEnabled && canTransmitRole()) {
           try { await offerToRoomListeners(); } catch (error) { console.warn('[Party audio] New member offer:', error); }
         }
@@ -577,21 +580,33 @@
   async function decideSeatRequest(requestId, decision) {
     if (!activeRoom || !isHost || !currentUser) return;
     try {
-      const { data: request, error: readError } = await db().from('voice_room_seat_requests')
-        .select('id,user_id').eq('id', requestId).eq('room_id', activeRoom.id).maybeSingle();
-      if (readError) throw readError;
-      if (!request) throw new Error('Seat request no longer exists.');
-      const { error } = await db().from('voice_room_seat_requests')
-        .update({ status: decision, updated_at: new Date().toISOString() })
-        .eq('id', requestId).eq('room_id', activeRoom.id);
-      if (error) throw error;
       if (decision === 'approved') {
-        const { error: memberError } = await db().from('voice_room_members')
-          .update({ role: 'speaker' }).eq('room_id', activeRoom.id).eq('user_id', request.user_id);
-        if (memberError) console.warn('[Party] Speaker role update:', memberError.message);
+        // The database function updates the member role and request status
+        // atomically; do not separately update either table from the browser.
+        const { data, error } = await db().rpc('approve_voice_room_seat_request', {
+          p_request_id: requestId
+        });
+        if (error) throw error;
+        if (data !== true) throw new Error('The database did not confirm the seat approval.');
+      } else if (decision === 'rejected') {
+        const { error } = await db().from('voice_room_seat_requests')
+          .update({ status: 'rejected', updated_at: new Date().toISOString() })
+          .eq('id', requestId)
+          .eq('room_id', activeRoom.id)
+          .eq('status', 'pending');
+        if (error) throw error;
+      } else {
+        throw new Error('Unknown seat request decision.');
       }
-      await loadSeatRequests();
-      showNotice(decision === 'approved' ? 'Seat request approved.' : 'Seat request rejected.');
+
+      await Promise.all([
+        loadSeatRequests(),
+        renderSeats(),
+        updateMemberCount()
+      ]);
+      showNotice(decision === 'approved'
+        ? 'Seat approved. The member is now a speaker.'
+        : 'Seat request rejected.');
     } catch (error) {
       console.error('[Party] Decide seat request:', error);
       showNotice(error.message || 'Could not update seat request.');
