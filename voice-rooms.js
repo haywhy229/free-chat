@@ -15,6 +15,7 @@
   let chatChannel = null;
   let audioSignalChannel = null;
   let memberWatchChannel = null;
+  let seatRequestWatchChannel = null;
   let peerConnections = new Map();
   let processedSignalIds = new Set();
   let myRoomRole = 'listener';
@@ -434,7 +435,8 @@
           role: room.host_id === currentUser.id ? 'host' : 'listener',
           joined_at: new Date().toISOString()
         }, {
-          onConflict: 'room_id,user_id'
+          onConflict: 'room_id,user_id',
+          ignoreDuplicates: true
         });
 
       if (error) throw error;
@@ -454,6 +456,7 @@
       await loadMySeatRequest();
       await loadSeatRequests();
       await loadModeratorPanel();
+      await startSeatRequestWatch(room.id);
 
       $('chatMessages').innerHTML =
         '<div class="system-message">You joined the live party. Earlier messages are not shown on re-entry.</div>';
@@ -731,54 +734,112 @@
     }
   }
 
-  function renderSeats() {
-    if (!activeRoom) return;
+  async function renderSeats() {
+    if (!activeRoom || !db()) return;
 
-    // Always render the host once. The host is also the current user,
-    // so do not add a second "You" seat when the host raises their hand.
-    const seats = [
-      {
-        name: isHost ? 'You (Host)' : 'Party Host',
-        role: isHost && handRaised ? 'HOST • HAND RAISED' : 'HOST',
+    try {
+      const { data: members, error } = await db()
+        .from('voice_room_members')
+        .select('user_id,role')
+        .eq('room_id', activeRoom.id)
+        .order('joined_at', { ascending: true });
+      if (error) throw error;
+
+      const rows = members || [];
+      const ids = rows.map(m => m.user_id).filter(Boolean);
+      const { data: profiles, error: profileError } = ids.length
+        ? await db().from('profiles').select('id,username').in('id', ids)
+        : { data: [], error: null };
+      if (profileError) console.warn('[Party] Seat profiles:', profileError.message);
+
+      const names = new Map((profiles || []).map(p => [String(p.id), p.username || 'FREE CHAT user']));
+      const hostMember = rows.find(m => String(m.user_id) === String(activeRoom.host_id));
+      const seats = [{
+        name: isHost ? 'You (Host)' : (names.get(String(activeRoom.host_id)) || 'Party Host'),
+        role: 'HOST',
         icon: '👑',
         host: true,
         mic: isHost ? micEnabled : false
+      }];
+
+      // Only approved speakers (and moderators) occupy speaker seats.
+      // Listeners and users who only raised a hand remain outside the seat grid.
+      const speakers = rows.filter(m =>
+        String(m.user_id) !== String(activeRoom.host_id) &&
+        ['speaker', 'moderator'].includes(String(m.role || '').toLowerCase())
+      );
+
+      for (const member of speakers) {
+        const mine = String(member.user_id) === String(currentUser?.id);
+        seats.push({
+          name: mine ? 'You' : (names.get(String(member.user_id)) || 'FREE CHAT user'),
+          role: String(member.role).toUpperCase() + (mine && handRaised ? ' • HAND RAISED' : ''),
+          icon: mine ? '🙂' : '🎙️',
+          host: false,
+          mic: mine ? micEnabled : false
+        });
       }
-    ];
 
-    // Non-host members get their own listener seat. A host must never
-    // appear again as a listener seat.
-    if (!isHost && isMember) {
-      seats.push({
-        name: currentUser?.email?.split('@')[0] || 'You',
-        role: handRaised ? 'HAND RAISED' : 'LISTENER',
-        icon: '🙂',
-        host: false,
-        mic: micEnabled
-      });
+      while (seats.length < 6) {
+        seats.push({
+          name: 'Open seat',
+          role: 'WAITING',
+          icon: '＋',
+          host: false,
+          mic: false
+        });
+      }
+
+      $('seatsGrid').innerHTML = seats.slice(0, 6).map(seat => `
+        <div class="seat ${seat.host ? 'host' : ''}">
+          <span class="seat-mic">${seat.mic ? '🎙️' : '🔇'}</span>
+          <div class="seat-avatar">${seat.icon}</div>
+          <div class="seat-name">${esc(seat.name)}</div>
+          <div class="seat-role">${esc(seat.role)}</div>
+        </div>
+      `).join('');
+
+      $('seatCount').textContent = '6';
+      $('handBtn').textContent = handRaised ? '✋ Lower hand' : '✋ Raise hand';
+    } catch (error) {
+      console.error('[Party] Render seats:', error);
+    }
+  }
+
+  async function startSeatRequestWatch(roomId) {
+    if (!db() || !currentUser || !roomId) return;
+    if (seatRequestWatchChannel) {
+      await db().removeChannel(seatRequestWatchChannel).catch(() => {});
+      seatRequestWatchChannel = null;
     }
 
-    while (seats.length < 6) {
-      seats.push({
-        name: 'Open seat',
-        role: 'WAITING',
-        icon: '＋',
-        host: false,
-        mic: false
+    seatRequestWatchChannel = db()
+      .channel(`party-seat-requests-${roomId}-${currentUser.id}`)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'voice_room_seat_requests',
+        filter: `room_id=eq.${roomId}`
+      }, async payload => {
+        if (!activeRoom || String(activeRoom.id) !== String(roomId)) return;
+        if (isHost) await loadSeatRequests();
+        if (String(payload.new?.user_id || payload.old?.user_id || '') === String(currentUser.id)) {
+          await loadMySeatRequest();
+        }
+        await renderSeats();
+      })
+      .subscribe(status => {
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          console.warn('[Party] Seat request realtime status:', status);
+        }
       });
+  }
+
+  async function stopSeatRequestWatch() {
+    if (seatRequestWatchChannel && db()) {
+      await db().removeChannel(seatRequestWatchChannel).catch(() => {});
     }
-
-    $('seatsGrid').innerHTML = seats.map(seat => `
-      <div class="seat ${seat.host ? 'host' : ''}">
-        <span class="seat-mic">${seat.mic ? '🎙️' : '🔇'}</span>
-        <div class="seat-avatar">${seat.icon}</div>
-        <div class="seat-name">${esc(seat.name)}</div>
-        <div class="seat-role">${esc(seat.role)}</div>
-      </div>
-    `).join('');
-
-    $('seatCount').textContent = '6';
-    $('handBtn').textContent = handRaised ? '✋ Lower hand' : '✋ Raise hand';
+    seatRequestWatchChannel = null;
   }
 
   function addChatMessage(name, message, gift = false, messageId = null) {
@@ -998,6 +1059,7 @@
       }
     }
 
+    await stopSeatRequestWatch();
     activeRoom = null;
     isMember = false;
     isHost = false;
@@ -1054,7 +1116,7 @@
     button.addEventListener('click', () => showGiftDemo(button));
   });
 
-  window.addEventListener('pagehide', () => { stopMicrophone(); stopRoomAudio(); });
+  window.addEventListener('pagehide', () => { stopMicrophone(); stopRoomAudio(); stopSeatRequestWatch(); });
 
   (async () => {
     await getUser();
