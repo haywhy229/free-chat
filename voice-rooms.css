@@ -414,3 +414,10 @@ h1, h2, p { margin-top: 0; }
 #moderatorMembersList .seat-request-actions button { margin:2px; }
 
 #moderatorMembersList [data-remove-user] { background:#fee2e2; color:#991b1b; }
+
+/* Tap-to-request stage seats */
+.seat.open-seat { cursor:pointer; border:1px dashed rgba(196,181,253,.55); background:rgba(139,92,246,.09); }
+.seat.open-seat:focus-visible { outline:3px solid #5eead4; outline-offset:3px; }
+.seat.open-seat .seat-avatar { color:#c4b5fd; }
+.seat.open-seat .seat-mic { color:#5eead4; }
+.seat.open-seat:active { transform:scale(.97); }

@@ -17,8 +17,7 @@
   let memberWatchChannel = null;
   let seatRequestWatchChannel = null;
   let peerConnections = new Map();
-  // ICE can arrive before the matching offer/answer. Keep it until SDP is ready.
-  let pendingIceCandidates = new Map();
+  const pendingIceCandidates = new Map();
   let processedSignalIds = new Set();
   let myRoomRole = 'listener';
   let remoteAudioElements = new Map();
@@ -84,34 +83,12 @@
       try { pc.close(); } catch (_) {}
       peerConnections.delete(key);
     }
-    pendingIceCandidates.delete(key);
     const audio = remoteAudioElements.get(key);
     if (audio) {
       audio.srcObject = null;
       audio.remove();
       remoteAudioElements.delete(key);
     }
-  }
-
-  async function flushPendingIceCandidates(peerId, pc) {
-    const key = String(peerId);
-    if (!pc?.remoteDescription) return;
-    const queued = pendingIceCandidates.get(key) || [];
-    pendingIceCandidates.delete(key);
-    for (const candidate of queued) {
-      try {
-        await pc.addIceCandidate(new RTCIceCandidate(candidate));
-      } catch (error) {
-        console.warn('[Party audio] Queued ICE candidate:', error.message);
-      }
-    }
-  }
-
-  function queueIceCandidate(peerId, candidate) {
-    const key = String(peerId);
-    const queued = pendingIceCandidates.get(key) || [];
-    queued.push(candidate);
-    pendingIceCandidates.set(key, queued);
   }
 
   async function createPeerConnection(peerId, shouldOffer = false) {
@@ -153,6 +130,16 @@
     return pc;
   }
 
+  async function flushPendingIceCandidates(peerId, pc) {
+    const key = String(peerId);
+    const queued = pendingIceCandidates.get(key) || [];
+    pendingIceCandidates.delete(key);
+    for (const candidate of queued) {
+      try { await pc.addIceCandidate(new RTCIceCandidate(candidate)); }
+      catch (error) { console.warn('[Party audio] Queued ICE candidate:', error.message); }
+    }
+  }
+
   async function handleAudioSignal(signal) {
     if (!signal || !activeRoom || String(signal.room_id) !== String(activeRoom.id)) return;
     if (String(signal.recipient_id) !== String(currentUser?.id)) return;
@@ -165,7 +152,6 @@
         if (canTransmitRole()) return;
         const pc = await createPeerConnection(senderId, false);
         await pc.setRemoteDescription(new RTCSessionDescription(signal.payload));
-        await flushPendingIceCandidates(senderId, pc);
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
         await sendAudioSignal(senderId, 'answer', pc.localDescription.toJSON());
@@ -173,20 +159,18 @@
         const pc = peerConnections.get(senderId);
         if (pc && !pc.currentRemoteDescription) {
           await pc.setRemoteDescription(new RTCSessionDescription(signal.payload));
-          await flushPendingIceCandidates(senderId, pc);
         }
       } else if (signal.signal_type === 'ice-candidate') {
-        if (!signal.payload) return;
         const pc = peerConnections.get(senderId);
-        if (!pc || !pc.remoteDescription) {
-          // The offer/answer may still be in flight. Do not discard this candidate.
-          queueIceCandidate(senderId, signal.payload);
-          return;
-        }
-        try {
-          await pc.addIceCandidate(new RTCIceCandidate(signal.payload));
-        } catch (error) {
-          console.warn('[Party audio] ICE candidate:', error.message);
+        if (signal.payload) {
+          if (pc?.remoteDescription) {
+            try { await pc.addIceCandidate(new RTCIceCandidate(signal.payload)); }
+            catch (error) { console.warn('[Party audio] ICE candidate:', error.message); }
+          } else {
+            const queue = pendingIceCandidates.get(senderId) || [];
+            queue.push(signal.payload);
+            pendingIceCandidates.set(senderId, queue);
+          }
         }
       }
     } catch (error) {
@@ -213,7 +197,6 @@
     if (roleError) throw roleError;
     myRoomRole = mine.role || 'listener';
     processedSignalIds.clear();
-    pendingIceCandidates.clear();
 
     audioSignalChannel = db().channel(`party-audio-signals-${roomId}-${currentUser.id}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'voice_room_signals', filter: `room_id=eq.${roomId}` }, payload => {
@@ -307,7 +290,7 @@
     try {
       const { data, error } = await db()
         .from('voice_rooms')
-        .select('id,name,topic,host_id,visibility,status,created_at,allow_anyone_seat')
+        .select('id,name,topic,host_id,visibility,status,created_at,allow_anyone_seat,seat_capacity')
         .eq('status', 'active')
         .eq('visibility', 'public')
         .order('created_at', { ascending: false })
@@ -391,6 +374,7 @@
     const name = $('roomName').value.trim();
     const topic = $('roomTopic').value.trim();
     const visibility = $('roomType').value;
+    const seatCapacity = Number($('roomCapacity')?.value || 6);
 
     if (!name) {
       showNotice('Enter a party name.');
@@ -409,9 +393,10 @@
           topic: topic || null,
           visibility,
           host_id: currentUser.id,
-          status: 'active'
+          status: 'active',
+          seat_capacity: seatCapacity
         })
-        .select('id,name,topic,host_id,visibility,status,created_at,allow_anyone_seat')
+        .select('id,name,topic,host_id,visibility,status,created_at,allow_anyone_seat,seat_capacity')
         .single();
 
       if (error) throw error;
@@ -785,74 +770,55 @@
 
   async function renderSeats() {
     if (!activeRoom || !db()) return;
-
     try {
-      const { data: members, error } = await db()
-        .from('voice_room_members')
-        .select('user_id,role')
-        .eq('room_id', activeRoom.id)
-        .order('joined_at', { ascending: true });
+      const { data: members, error } = await db().from('voice_room_members')
+        .select('user_id,role').eq('room_id', activeRoom.id).order('joined_at', { ascending: true });
       if (error) throw error;
-
       const rows = members || [];
       const ids = rows.map(m => m.user_id).filter(Boolean);
       const { data: profiles, error: profileError } = ids.length
         ? await db().from('profiles').select('id,username').in('id', ids)
         : { data: [], error: null };
       if (profileError) console.warn('[Party] Seat profiles:', profileError.message);
-
       const names = new Map((profiles || []).map(p => [String(p.id), p.username || 'FREE CHAT user']));
-      const hostMember = rows.find(m => String(m.user_id) === String(activeRoom.host_id));
+      const capacity = [6, 8, 12, 20].includes(Number(activeRoom.seat_capacity)) ? Number(activeRoom.seat_capacity) : 6;
       const seats = [{
         name: isHost ? 'You (Host)' : (names.get(String(activeRoom.host_id)) || 'Party Host'),
-        role: 'HOST',
-        icon: '👑',
-        host: true,
-        mic: isHost ? micEnabled : false
+        role: 'HOST', icon: '👑', host: true, mic: isHost ? micEnabled : false, occupied: true
       }];
-
-      // Only approved speakers (and moderators) occupy speaker seats.
-      // Listeners and users who only raised a hand remain outside the seat grid.
-      const speakers = rows.filter(m =>
-        String(m.user_id) !== String(activeRoom.host_id) &&
-        ['speaker', 'moderator'].includes(String(m.role || '').toLowerCase())
-      );
-
+      const speakers = rows.filter(m => String(m.user_id) !== String(activeRoom.host_id) &&
+        ['speaker', 'moderator'].includes(String(m.role || '').toLowerCase()));
       for (const member of speakers) {
         const mine = String(member.user_id) === String(currentUser?.id);
         seats.push({
           name: mine ? 'You' : (names.get(String(member.user_id)) || 'FREE CHAT user'),
-          role: String(member.role).toUpperCase() + (mine && handRaised ? ' • HAND RAISED' : ''),
-          icon: mine ? '🙂' : '🎙️',
-          host: false,
-          mic: mine ? micEnabled : false
+          role: String(member.role).toUpperCase(), icon: mine ? '🙂' : '🎙️',
+          host: false, mic: mine ? micEnabled : false, occupied: true
         });
       }
-
-      while (seats.length < 6) {
-        seats.push({
-          name: 'Open seat',
-          role: 'WAITING',
-          icon: '＋',
-          host: false,
-          mic: false
-        });
+      while (seats.length < capacity) {
+        const seatNumber = seats.length;
+        seats.push({ name: `Open seat ${seatNumber}`, role: 'TAP TO REQUEST',
+          icon: '＋', host: false, mic: false, occupied: false });
       }
-
-      $('seatsGrid').innerHTML = seats.slice(0, 6).map(seat => `
-        <div class="seat ${seat.host ? 'host' : ''}">
-          <span class="seat-mic">${seat.mic ? '🎙️' : '🔇'}</span>
+      $('seatsGrid').innerHTML = seats.slice(0, capacity).map((seat, index) => `
+        <div class="seat ${seat.host ? 'host' : ''} ${seat.occupied ? '' : 'open-seat'}"
+             ${seat.occupied ? '' : `role="button" tabindex="0" data-open-seat="${index}" aria-label="Request speaker seat ${index}"`}>
+          <span class="seat-mic">${seat.mic ? '🎙️' : (seat.occupied ? '🔇' : '🎤')}</span>
           <div class="seat-avatar">${seat.icon}</div>
           <div class="seat-name">${esc(seat.name)}</div>
           <div class="seat-role">${esc(seat.role)}</div>
-        </div>
-      `).join('');
-
-      $('seatCount').textContent = '6';
+        </div>`).join('');
+      const requestOpenSeat = () => requestSeat();
+      $('seatsGrid').querySelectorAll('[data-open-seat]').forEach(seat => {
+        seat.addEventListener('click', requestOpenSeat);
+        seat.addEventListener('keydown', event => {
+          if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); requestOpenSeat(); }
+        });
+      });
+      $('seatCount').textContent = String(capacity);
       $('handBtn').textContent = handRaised ? '✋ Lower hand' : '✋ Raise hand';
-    } catch (error) {
-      console.error('[Party] Render seats:', error);
-    }
+    } catch (error) { console.error('[Party] Render seats:', error); }
   }
 
   async function startSeatRequestWatch(roomId) {

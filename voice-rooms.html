@@ -61,7 +61,7 @@
 
       <section class="seats-section">
         <div class="section-title">
-          <div><h2>Party seats</h2><p>Host and speakers</p></div>
+          <div><h2>Party seats</h2><p>Tap an open microphone seat to request the mic</p></div>
           <span class="seat-note">HOST ★</span>
         </div>
         <div id="seatsGrid" class="seats-grid"></div>
@@ -121,6 +121,13 @@
       <input id="roomName" maxlength="60" placeholder="e.g. Naija Hangout" required>
       <label for="roomTopic">What are we talking about?</label>
       <input id="roomTopic" maxlength="120" placeholder="Music, games, daily life…">
+      <label for="roomCapacity">How many people can join the stage?</label>
+      <select id="roomCapacity">
+        <option value="6">6 people (1 host + 5 seats)</option>
+        <option value="8">8 people (1 host + 7 seats)</option>
+        <option value="12">12 people (1 host + 11 seats)</option>
+        <option value="20">20 people (1 host + 19 seats)</option>
+      </select>
       <label for="roomType">Who can find this party?</label>
       <select id="roomType">
         <option value="public">Public — everyone can find it</option>
