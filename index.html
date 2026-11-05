@@ -952,6 +952,8 @@
 
         <div class="profile-panel-actions">
 
+            <button type="button" class="profile-edit-button" onclick="window.location.href='my-account.html'">🪙 My Account</button>
+
             <button
                 type="button"
                 class="profile-edit-button"
@@ -3009,6 +3011,16 @@ function changeFeedTab(
     <small>Reels</small>
 </button>
 
+            <!-- GAME CENTRE -->
+            <button
+                type="button"
+                class="fc-menu-grid-item game-centre-menu-shortcut"
+                onclick="openGameCentreScreen()"
+            >
+                <span class="fc-menu-grid-icon">🎮</span>
+                <span>Game Centre</span>
+            </button>
+
             <!-- MARKETPLACE -->
             <button
                 type="button"
@@ -3316,6 +3328,50 @@ function changeFeedTab(
 
 </section>
 
+<!-- ==========================================
+     🎮 FREE CHAT GAME CENTRE
+========================================== -->
+<section id="gameCentreScreen" class="game-centre-screen hidden" aria-label="Game Centre">
+  <header class="game-centre-header">
+    <button type="button" class="game-centre-back" onclick="closeGameCentreScreen()" aria-label="Back to menu">‹</button>
+    <div class="game-centre-title"><h1>Game Center</h1><p>Choose a game and play for fun</p></div>
+    <button type="button" class="game-centre-settings" onclick="showGameCentreInfo()" aria-label="Game Centre information">⚙</button>
+  </header>
+  <nav class="game-centre-tabs" aria-label="Game Centre sections">
+    <button class="active" data-gc-tab="games" onclick="switchGameCentreTab('games',this)">Games</button>
+    <button data-gc-tab="rooms" onclick="switchGameCentreTab('rooms',this)">Hot Live Rooms</button>
+    <button data-gc-tab="rankings" onclick="switchGameCentreTab('rankings',this)">Rankings</button>
+    <button data-gc-tab="wins" onclick="switchGameCentreTab('wins',this)">Recent Wins</button>
+  </nav>
+  <div id="gcGamesPanel" class="game-centre-panel">
+    <div class="game-centre-banner"><div><span>FREE CHAT ARCADE</span><h2>Play. Connect. Have fun.</h2><p>Casual games for your next party.</p></div><b>🎮</b></div>
+    <div class="game-centre-list-heading"><div><h2>All Games</h2><p>More games are being prepared</p></div><span>18 GAMES</span></div>
+    <div class="game-centre-catalogue" id="gameCentreCatalogue">
+      <button class="gc-game-tile gc-game-fruit" onclick="openGameCentreParty()"><span class="gc-game-icon">🍓</span><strong>Fruit Turntable</strong><small class="gc-available">● PLAY NOW</small></button>
+      <button class="gc-game-tile gc-game-ludo" onclick="gameCentreComingSoon('Ludo')"><span class="gc-game-icon">🎲</span><strong>Ludo</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-football" onclick="gameCentreComingSoon('Football Challenge')"><span class="gc-game-icon">⚽</span><strong>Football Challenge</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-car" onclick="gameCentreComingSoon('Luxury Car Race')"><span class="gc-game-icon">🏎️</span><strong>Luxury Car Race</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-racing" onclick="gameCentreComingSoon('Fast & Furious')"><span class="gc-game-icon">🚘</span><strong>Fast &amp; Furious</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-fruit2" onclick="gameCentreComingSoon('Fruit Puzzle')"><span class="gc-game-icon">🍉</span><strong>Fruit Puzzle</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-mole" onclick="gameCentreComingSoon('Crazy Mole')"><span class="gc-game-icon">🐹</span><strong>Crazy Mole</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-chicken" onclick="gameCentreComingSoon('Chicken Rush')"><span class="gc-game-icon">🐔</span><strong>Chicken Rush</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-shark" onclick="gameCentreComingSoon('Golden Shark')"><span class="gc-game-icon">🦈</span><strong>Golden Shark</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-monster" onclick="gameCentreComingSoon('Monster Quest')"><span class="gc-game-icon">👾</span><strong>Monster Quest</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-dino" onclick="gameCentreComingSoon('Dino Hunt')"><span class="gc-game-icon">🦖</span><strong>Dino Hunt</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-zuma" onclick="gameCentreComingSoon('Zuma Bubble')"><span class="gc-game-icon">🫧</span><strong>Zuma Bubble</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-beach" onclick="gameCentreComingSoon('Beach Duel')"><span class="gc-game-icon">🏖️</span><strong>Beach Duel</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-fishing" onclick="gameCentreComingSoon('Fishing Adventure')"><span class="gc-game-icon">🎣</span><strong>Fishing Adventure</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-hammer" onclick="gameCentreComingSoon('Big Hammer')"><span class="gc-game-icon">🔨</span><strong>Big Hammer</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-whack" onclick="gameCentreComingSoon('Whack-a-Mole')"><span class="gc-game-icon">🐾</span><strong>Whack-a-Mole</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-fishing2" onclick="gameCentreComingSoon('Royal Fishing')"><span class="gc-game-icon">🐠</span><strong>Royal Fishing</strong><small>COMING SOON</small></button>
+      <button class="gc-game-tile gc-game-club" onclick="gameCentreComingSoon('Football Club')"><span class="gc-game-icon">🏆</span><strong>Football Club</strong><small>COMING SOON</small></button>
+    </div>
+    <p class="game-centre-footer-note">Free-to-play games · No recharge, withdrawals or cash prizes in this version.</p>
+  </div>
+  <div id="gcRoomsPanel" class="game-centre-empty-panel hidden"><div>🎙️</div><h2>Hot Live Rooms</h2><p>Live game rooms will appear here when room-game matchmaking is connected.</p></div>
+  <div id="gcRankingsPanel" class="game-centre-empty-panel hidden"><div>🏆</div><h2>Game Rankings</h2><p>Player rankings will appear here once game scores are connected.</p></div>
+  <div id="gcWinsPanel" class="game-centre-empty-panel hidden"><div>🎉</div><h2>Recent Wins</h2><p>Recent game results will appear here. No results are being fabricated.</p></div>
+</section>
 
 <!-- =====================================================
      👤 OTHER USER PROFILE

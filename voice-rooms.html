@@ -9,7 +9,7 @@
 </head>
 <body>
   <header class="topbar">
-    <a class="back" href="index-fixed.html" aria-label="Back">‹</a>
+    <a class="back" href="index.html" aria-label="Back">‹</a>
     <div class="brand-block">
       <strong>FREE CHAT</strong>
       <span>LIVE PARTY</span>
@@ -38,55 +38,80 @@
     </section>
 
     <section id="partyRoom" class="party-room hidden">
-      <div class="party-banner">
-        <div class="party-banner-top">
-          <button id="backToLobby" class="glass-btn">← Parties</button>
-          <span class="live-label"><i></i> PARTY ROOM</span>
-          <button id="leaveRoom" class="glass-btn">Leave ✕</button>
+      <div class="party-room-topbar">
+        <div class="party-owner-mark">✦</div>
+        <div class="party-room-title">
+          <strong id="activeRoomName">Live Party</strong>
+          <span id="activeRoomTopic">Meet and chat with everyone</span>
+          <small><i></i> LIVE PARTY · <b id="memberCount">0</b> members</small>
         </div>
-        <div class="party-heading">
-          <div class="party-emblem">✦</div>
-          <div>
-            <p class="eyebrow">WELCOME TO THE PARTY</p>
-            <h1 id="activeRoomName">Live Party</h1>
-            <p id="activeRoomTopic">Meet and chat with everyone</p>
-          </div>
+        <div class="party-room-actions">
+          <button id="backToLobby" class="glass-btn" aria-label="Back to parties">☷</button>
+          <button id="leaveRoom" class="glass-btn" aria-label="Leave room">✕</button>
         </div>
-        <div class="party-stats">
-          <span>🎙️ <b id="seatCount">0</b> seats</span>
-          <span>👥 <b id="memberCount">0</b> members</span>
-          <span>🎁 Party gifts</span>
-        </div>
+        <span id="seatCount" class="hidden">0</span>
       </div>
 
       <section class="seats-section">
         <div class="section-title">
-          <div><h2>Party seats</h2><p>Tap an open microphone seat to request the mic</p></div>
+          <div><h2>Party seats</h2><p>Tap an open microphone seat to join the stage</p></div>
           <span class="seat-note">HOST ★</span>
         </div>
         <div id="seatsGrid" class="seats-grid"></div>
-        <p id="seatRequestStatus" class="hint">Seat requests need the host’s approval.</p>
-        <label class="seat-setting hidden"><input type="checkbox" id="allowAnyoneSeat"> Allow anyone to take a seat without asking</label>
-        <button id="requestSeatBtn" class="primary seat-request-button" type="button">✋ Request a seat</button>
-        <div id="seatRequestsPanel" class="seat-requests-panel hidden"><h3>Pending seat requests</h3><div id="seatRequestsList"><p class="hint">No pending seat requests.</p></div></div>
-        <div id="moderatorPanel" class="seat-requests-panel hidden"><h3>Host controls · Participants</h3><p class="hint">Promote trusted members, remove moderator roles, or remove participants from this party.</p><div id="moderatorMembersList"><p class="hint">Participants will appear here.</p></div></div>
+        <section id="teamBattlePanel" class="team-battle-panel hidden" aria-live="polite">
+          <div class="battle-toolbar"><div class="battle-feed-tabs"><button class="active" type="button" data-battle-tab="all">All</button><button type="button" data-battle-tab="chat">Chat</button></div><div class="battle-team-label red-label">Red team</div><div class="battle-clock-wrap"><span class="battle-clock" id="battleClock">--:--</span><small id="battleStatus">Preparing</small></div><div class="battle-team-label blue-label">Blue team</div><button id="battleEnd" class="battle-end-compact" type="button" aria-label="End battle">⏻ <span>End</span></button></div>
+          <div class="battle-score-strip"><div class="battle-score-red"><span>●</span><strong id="redScore">0</strong></div><div class="battle-score-divider">⚔</div><div class="battle-score-blue"><strong id="blueScore">0</strong><span>●</span></div></div>
+          <div class="battle-team-actions"><button id="joinRed" type="button">Join Red team</button><button id="joinBlue" type="button">Join Blue team</button></div>
+          <div id="battleHostActions" class="battle-host-actions"><button id="battleStart" type="button">▶ Start</button></div>
+          <p id="battleHint">Team Battle is being prepared.</p>
+        </section>
+        <p id="seatRequestStatus" class="hint">You enter as a listener. Tap any glowing empty seat to join the stage instantly.</p>
         <p class="hint">Live microphone audio uses WebRTC. Hosts, moderators and approved speakers can transmit; listeners can hear.</p>
       </section>
 
-      <section class="chat-panel">
-        <div class="chat-heading">
-          <div><h2>Party chat</h2><p>Room conversation</p></div>
-          <span class="chat-status"><i></i> Room open</span>
+      <section class="chat-panel conversation-panel">
+        <div class="conversation-topline">
+          <div><span class="conversation-live-dot"></span><strong>PARTY ROOM</strong><small>Room updates and conversations</small></div>
+          <span class="chat-status">● LIVE</span>
         </div>
-        <div id="chatMessages" class="chat-messages" aria-live="polite">
-          <div class="system-message">Welcome! Be kind and respectful to everyone.</div>
+        <div class="conversation-layout">
+          <nav class="conversation-tabs" aria-label="Conversation tabs">
+            <button type="button" class="conversation-tab active" data-conversation-tab="room">All</button>
+            <button type="button" class="conversation-tab" data-conversation-tab="chat">Chat</button>
+          </nav>
+          <div class="conversation-main">
+            <div class="room-announcement" id="roomAnnouncement"><span class="announcement-icon">✦</span><div><b>Room Announcement</b><p>Welcome everyone! Keep the conversation friendly and respectful. Have fun and enjoy the party.</p></div></div>
+            <div id="chatMessages" class="chat-messages" aria-live="polite">
+              <div class="system-message">Welcome! Be kind and respectful to everyone.</div>
+            </div>
+            <form id="chatForm" class="chat-form conversation-form">
+              <button type="button" class="chat-extra-btn" aria-label="Emoji" title="Emoji">☺</button>
+              <input id="chatInput" maxlength="300" placeholder="Say something…" autocomplete="off" required>
+              <button type="button" id="chatGiftShortcut" class="chat-extra-btn" aria-label="Gifts" title="Gifts">🎁</button>
+              <button class="send-btn" type="submit" aria-label="Send message">➤</button>
+            </form>
+      <div class="bottom-controls">
+        <button id="micBtn" class="control-btn mic-btn" aria-label="Microphone"><span id="micIcon">🎙️</span><span id="micLabel">Enable my mic</span></button>
+        <button id="toolsBtn" class="control-btn tools-quick" aria-label="Open party tools" title="Tools">▦</button>
+        <button id="handBtn" class="control-btn" aria-label="Raise hand">✋</button>
+        <button id="giftBtn" class="control-btn gift-quick" aria-label="Gifts">🎁</button>
+      </div>
+          </div>
         </div>
-        <form id="chatForm" class="chat-form">
-          <input id="chatInput" maxlength="300" placeholder="Say something nice…" autocomplete="off" required>
-          <button class="send-btn" type="submit" aria-label="Send message">➤</button>
-        </form>
-        <p class="hint">This chat is a local preview and is not shared with other users yet.</p>
       </section>
+
+      <div id="toolsBackdrop" class="tools-backdrop hidden" aria-hidden="true">
+        <section class="tools-sheet" role="dialog" aria-modal="true" aria-labelledby="toolsTitle">
+          <div class="tools-sheet-head"><h2 id="toolsTitle">🧰 Tools</h2><button type="button" id="closeTools" aria-label="Close tools">×</button></div>
+          <div class="tools-grid">
+            <button type="button" data-tool="gamecentre"><span>🎮</span><b>Game Centre</b></button><button type="button" data-tool="lucky"><span>💰</span><b>Lucky bag</b></button><button type="button" data-tool="calculate"><span>🧮</span><b>Calculate</b></button><button type="button" data-tool="gamepk"><span>🎮</span><b>Game PK</b></button><button type="button" data-tool="battle"><span>⚔️</span><b>Team Battle</b></button><button type="button" data-tool="777"><span>🎰</span><b>777</b></button>
+            <button type="button" data-tool="dice"><span>🎲</span><b>Dice</b></button><button type="button" data-tool="mora"><span>✊</span><b>Mora</b></button><button type="button" data-tool="roomgift"><span>🎁</span><b>Room Gift</b></button><button type="button" data-tool="textchat"><span>💬</span><b>Text chat</b></button><button type="button" data-tool="roommode"><span>🏠</span><b>Room mode</b></button>
+            <button type="button" data-tool="gathering"><span>🔔</span><b>Gathering</b></button><button type="button" data-tool="share"><span>📺</span><b>Share video</b></button><button type="button" data-tool="clear"><span>🧹</span><b>Clear Chat</b></button><button type="button" data-tool="mute"><span>🔊</span><b>Mute</b></button><button type="button" data-tool="music"><span>🎵</span><b>Play music</b></button>
+            <button type="button" data-tool="gifteffect"><span>🌟</span><b>Gift effect</b></button><button type="button" data-tool="entryeffect"><span>✨</span><b>Entry effect</b></button>
+          </div>
+          <p id="toolsFeedback" class="tools-feedback" aria-live="polite">Choose a party tool.</p>
+        </section>
+      </div>
 
       <section class="gift-panel">
         <div class="gift-heading">
@@ -102,15 +127,86 @@
         <p id="giftNotice" class="hint">Demo only — gifts do not spend coins or transfer money.</p>
       </section>
 
-      <div class="bottom-controls">
-        <button id="micBtn" class="control-btn mic-btn">
-          <span id="micIcon">🎙️</span><span id="micLabel">Enable my mic</span>
-        </button>
-        <button id="handBtn" class="control-btn">✋ Raise hand</button>
-        <button id="giftBtn" class="control-btn gift-quick">🎁 Gifts</button>
-      </div>
     </section>
   </main>
+
+
+  <div id="gamePkSetupModal" class="battle-modal hidden" role="dialog" aria-modal="true" aria-labelledby="gamePkSetupTitle">
+    <div class="battle-dialog gamepk-dialog">
+      <button id="closeGamePkSetup" class="battle-close" type="button">×</button>
+      <h2 id="gamePkSetupTitle">🎮 Game PK</h2>
+      <label for="gamePkGame">Select a game</label>
+      <select id="gamePkGame">
+        <option value="Fruit turntable">🍓 Fruit turntable</option>
+        <option value="Luxury car">🚘 Luxury car</option>
+        <option value="Golden shark">🦈 Golden shark</option>
+        <option value="Big hammer">🔨 Big hammer</option>
+        <option value="Hunting Dino">🦖 Hunting Dino</option>
+        <option value="Greedy Pro">🟢 Greedy Pro</option>
+      </select>
+      <label for="gamePkDuration">Select duration</label>
+      <select id="gamePkDuration">
+        <option value="5">5 minutes</option><option value="10" selected>10 minutes</option>
+        <option value="15">15 minutes</option><option value="30">30 minutes</option>
+      </select>
+      <p class="hint">Scores are calculated from demo room gifts sent during the selected time. No coins are transferred.</p>
+      <button id="confirmGamePkSetup" class="battle-confirm" type="button">Confirm &amp; start</button>
+    </div>
+  </div>
+
+  <div id="battleSetupModal" class="battle-modal hidden" role="dialog" aria-modal="true" aria-labelledby="battleSetupTitle">
+    <div class="battle-dialog"><button id="closeBattleSetup" class="battle-close" type="button">×</button><h2 id="battleSetupTitle">⚔️ Team Battle</h2>
+      <label for="battleMode">Battle mode</label><select id="battleMode"><option value="2">2V2 · 5 mics</option><option value="4">4V4 · 9 mics</option><option value="7">7V7 · 15 mics</option><option value="10">10V10 · 20 mics</option></select>
+      <label for="battleDuration">Duration</label><select id="battleDuration"><option value="8">8 minutes</option><option value="10">10 minutes</option><option value="12">12 minutes</option><option value="15">15 minutes</option></select>
+      <label class="battle-check"><input id="battleStayMic" type="checkbox" checked> Stay in the mic when battle starts</label>
+      <button id="confirmBattleSetup" class="battle-confirm" type="button">Confirm</button>
+    </div>
+  </div>
+
+  <div id="gameCentreModal" class="battle-modal hidden" role="dialog" aria-modal="true" aria-labelledby="gameCentreTitle">
+    <div class="battle-dialog game-centre-dialog">
+      <button id="closeGameCentre" class="battle-close" type="button" aria-label="Close">×</button>
+      <h2 id="gameCentreTitle">🎮 Game Centre</h2>
+      <p class="game-centre-intro">Choose a game to play in this party. Your Game PK points are shared with everyone in the room.</p>
+      <div class="game-centre-grid">
+        <button type="button" class="game-centre-tile is-ready" data-launch-game="Fruit turntable"><span>🍓</span><b>Fruit Turntable</b><small>PLAY NOW</small></button>
+        <button type="button" class="game-centre-tile" data-coming-game="Luxury car"><span>🚘</span><b>Luxury Car</b><small>COMING NEXT</small></button>
+        <button type="button" class="game-centre-tile" data-coming-game="Golden shark"><span>🦈</span><b>Golden Shark</b><small>COMING NEXT</small></button>
+        <button type="button" class="game-centre-tile" data-coming-game="Big hammer"><span>🔨</span><b>Big Hammer</b><small>COMING NEXT</small></button>
+        <button type="button" class="game-centre-tile" data-coming-game="Hunting Dino"><span>🦖</span><b>Hunting Dino</b><small>COMING NEXT</small></button>
+        <button type="button" class="game-centre-tile" data-coming-game="Greedy Pro"><span>🟢</span><b>Greedy Pro</b><small>COMING NEXT</small></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="fruitGameModal" class="battle-modal hidden fruit-arcade-overlay" role="dialog" aria-modal="true" aria-labelledby="fruitGameTitle">
+    <div class="battle-dialog fruit-game-dialog fruit-arcade-cabinet">
+      <button id="closeFruitGame" class="battle-close" type="button" aria-label="Close">×</button>
+      <div class="fruit-cabinet-top">
+        <span class="fruit-orb fruit-orb-left">⭐</span>
+        <div class="fruit-title-plaque"><p class="fruit-game-eyebrow">FREE CHAT ARCADE</p><h2 id="fruitGameTitle">🍓 Fruit Turntable</h2></div>
+        <span class="fruit-orb fruit-orb-right">⭐</span>
+      </div>
+      <div class="fruit-round-display">ROUND <b id="fruitRound">1</b><span id="fruitMachineStatus">PICK YOUR FRUIT</span></div>
+      <div class="fruit-machine-screen">
+        <div class="fruit-game-instruction"><span>FIND THE TARGET FRUIT</span><strong id="fruitTarget">❔</strong></div>
+        <div class="fruit-board-wrap">
+          <div id="fruitBoard" class="fruit-board" aria-label="Choose one fruit for this round"></div>
+          <div class="fruit-center-clock"><b id="fruitGameClock">30</b><small>SEC</small></div>
+        </div>
+      </div>
+      <div class="fruit-score-panels">
+        <div><small>YOUR POINTS</small><b id="fruitMyScore">0</b></div>
+        <div><small>ROOM PK</small><b id="fruitRoomScore">0</b></div>
+      </div>
+      <div class="fruit-live-leaderboard-wrap"><div class="fruit-live-title">🏆 LIVE ROOM LEADERBOARD</div><div id="fruitLiveLeaderboard" class="fruit-live-leaderboard">No room scores yet</div></div>
+      <div class="fruit-results-panel"><div class="fruit-live-title">📜 LATEST RESULTS</div><div id="fruitResultsHistory" class="fruit-results-history"><span>Waiting for first result…</span></div></div>
+      <p id="fruitGameMessage" class="fruit-game-message" aria-live="polite">The room host starts the live machine. Pick one fruit before the 30-second timer ends; rounds then repeat automatically.</p>
+      <div class="fruit-history"><span>🍓</span><span>🍇</span><span>🍒</span><span>🍊</span><span>🍉</span><span>🍋</span><span>🍍</span><span>🍌</span><span>🍎</span><small>FREE PLAY · NO COINS REQUIRED</small></div>
+      <button id="fruitStartButton" class="battle-confirm fruit-arcade-start" type="button" disabled>LIVE GAME · AUTO ROUND</button>
+    </div>
+  </div>
+
 
   <div id="createModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="createTitle">
     <form id="createForm" class="dialog">

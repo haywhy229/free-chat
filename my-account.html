@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Account · FREE CHAT</title>
+<link rel="stylesheet" href="my-account.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script defer src="my-account.js"></script>
+</head>
+<body>
+<main class="account-shell">
+  <header class="topbar"><button class="back" onclick="history.length>1?history.back():location.href='index.html'" aria-label="Go back">‹</button><div><b>FREE CHAT</b><small>MY ACCOUNT</small></div><button class="refresh" id="refreshBtn" aria-label="Refresh">↻</button></header>
+  <section class="wallet-card">
+    <div class="wallet-heading"><span class="wallet-icon">▣</span><div><h1>My Account</h1><p>Your coins and beans</p></div><span class="chevron">›</span></div>
+    <div class="balances">
+      <article><div class="balance-line"><span>🪙</span><strong id="coinsBalance">—</strong></div><button class="action-btn" disabled>Recharge <small>Coming Soon</small></button></article>
+      <article><div class="balance-line"><span>🫘</span><strong id="beansBalance">—</strong></div><button class="action-btn" disabled>Exchange <small>Coming Soon</small></button></article>
+    </div>
+    <p class="wallet-note">Coins and beans are currently virtual in-app points. Purchases and withdrawals are not available.</p>
+  </section>
+  <section class="reward-grid">
+    <button class="reward-tile tasks" disabled><span class="tile-icon">▤</span><span><b>Tasks Rewards</b><small>Coming soon</small></span><i>›</i></button>
+    <button class="reward-tile invites" disabled><span class="tile-icon">✉</span><span><b>Invite Rewards</b><small>Coming soon</small></span><i>›</i></button>
+  </section>
+  <section class="history-card"><div class="section-title"><div><h2>Transaction History</h2><p>Your recent coin and bean activity</p></div><button id="refreshHistory">Refresh</button></div><div id="historyList" class="history-list"><p class="muted">Loading your transactions…</p></div></section>
+  <section class="history-card" style="margin-top:14px"><div class="section-title"><div><h2>Account Settings</h2><p>Manage or permanently delete your account</p></div></div><p><a href="account-settings.html">⚙️ Account settings &amp; deletion</a></p></section>
+  <footer>FREE CHAT · Virtual rewards</footer>
+</main>
+<div id="toast" class="toast" role="status"></div>
+</body></html>

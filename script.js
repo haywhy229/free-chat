@@ -18834,9 +18834,25 @@ document.getElementById("fcMySupportRequestsBtn")
                 `;
 
                 document.getElementById("fcAdminSupportInboxBtn")
-.addEventListener("click", () => {
-window.location.href = "admin-support.html";
-});
+                    .addEventListener("click", () => {
+                        window.location.href = "admin-support.html";
+                    });
+
+                // User management is shown only to authenticated admins.
+                const manageUsersRow = document.createElement("div");
+                manageUsersRow.className = "fc-feature-row";
+                manageUsersRow.innerHTML = `
+                    <strong>👥 Manage Users</strong>
+                    <p>Search accounts, ban, unban, or delete users.</p>
+                    <button type="button" class="fc-settings-save"
+                        id="fcManageUsersBtn">Manage Users</button>
+                `;
+                adminArea.appendChild(manageUsersRow);
+
+                document.getElementById("fcManageUsersBtn")
+                    .addEventListener("click", () => {
+                        window.location.href = "admin-users.html";
+                    });
             }
         }
     } catch (error) {
@@ -20402,3 +20418,47 @@ window.loadStories = loadStories;
 window.openStoryByUser = openStoryByUser;
 window.closeViewStory = closeViewStory;
 window.nextStory = nextStory;
+
+
+/* ==========================================
+   🎮 GAME CENTRE HUB NAVIGATION
+========================================== */
+function openGameCentreScreen(){
+  const menu=document.getElementById('mainMenuScreen');
+  const home=document.getElementById('homeScreen');
+  const hub=document.getElementById('gameCentreScreen');
+  if(menu) menu.classList.add('hidden');
+  if(home) home.classList.add('hidden');
+  if(hub) hub.classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function closeGameCentreScreen(){
+  const hub=document.getElementById('gameCentreScreen');
+  const menu=document.getElementById('mainMenuScreen');
+  if(hub) hub.classList.add('hidden');
+  if(menu) menu.classList.remove('hidden');
+}
+function openGameCentreParty(){
+  // Games currently run inside Live Party rooms so every room member shares the same round.
+  window.location.href='voice-rooms.html';
+}
+
+/* Game Centre catalogue tabs and safe placeholder actions */
+function switchGameCentreTab(tab,button){
+  const panels={games:'gcGamesPanel',rooms:'gcRoomsPanel',rankings:'gcRankingsPanel',wins:'gcWinsPanel'};
+  Object.values(panels).forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden')});
+  const target=document.getElementById(panels[tab]);if(target)target.classList.remove('hidden');
+  document.querySelectorAll('.game-centre-tabs button').forEach(el=>el.classList.remove('active'));
+  if(button)button.classList.add('active');
+}
+function gameCentreComingSoon(name){
+  const message=(name||'This game')+' is coming soon to FREE CHAT Game Centre.';
+  if(typeof showToast==='function')showToast(message);else alert(message);
+}
+function showGameCentreInfo(){
+  const message='FREE CHAT Game Centre\n\nGames shown as COMING SOON are catalogue previews and are not playable yet. Fruit Turntable is the currently connected game. This version has no recharge, withdrawal or cash-prize features.';
+  if(typeof showToast==='function')showToast(message);else alert(message);
+}
+window.switchGameCentreTab=switchGameCentreTab;
+window.gameCentreComingSoon=gameCentreComingSoon;
+window.showGameCentreInfo=showGameCentreInfo;
