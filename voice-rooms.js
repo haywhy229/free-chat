@@ -17,6 +17,8 @@
   let memberWatchChannel = null;
   let seatRequestWatchChannel = null;
   let peerConnections = new Map();
+  // ICE can arrive before the matching offer/answer. Keep it until SDP is ready.
+  let pendingIceCandidates = new Map();
   let processedSignalIds = new Set();
   let myRoomRole = 'listener';
   let remoteAudioElements = new Map();
@@ -82,12 +84,34 @@
       try { pc.close(); } catch (_) {}
       peerConnections.delete(key);
     }
+    pendingIceCandidates.delete(key);
     const audio = remoteAudioElements.get(key);
     if (audio) {
       audio.srcObject = null;
       audio.remove();
       remoteAudioElements.delete(key);
     }
+  }
+
+  async function flushPendingIceCandidates(peerId, pc) {
+    const key = String(peerId);
+    if (!pc?.remoteDescription) return;
+    const queued = pendingIceCandidates.get(key) || [];
+    pendingIceCandidates.delete(key);
+    for (const candidate of queued) {
+      try {
+        await pc.addIceCandidate(new RTCIceCandidate(candidate));
+      } catch (error) {
+        console.warn('[Party audio] Queued ICE candidate:', error.message);
+      }
+    }
+  }
+
+  function queueIceCandidate(peerId, candidate) {
+    const key = String(peerId);
+    const queued = pendingIceCandidates.get(key) || [];
+    queued.push(candidate);
+    pendingIceCandidates.set(key, queued);
   }
 
   async function createPeerConnection(peerId, shouldOffer = false) {
@@ -141,6 +165,7 @@
         if (canTransmitRole()) return;
         const pc = await createPeerConnection(senderId, false);
         await pc.setRemoteDescription(new RTCSessionDescription(signal.payload));
+        await flushPendingIceCandidates(senderId, pc);
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
         await sendAudioSignal(senderId, 'answer', pc.localDescription.toJSON());
@@ -148,12 +173,20 @@
         const pc = peerConnections.get(senderId);
         if (pc && !pc.currentRemoteDescription) {
           await pc.setRemoteDescription(new RTCSessionDescription(signal.payload));
+          await flushPendingIceCandidates(senderId, pc);
         }
       } else if (signal.signal_type === 'ice-candidate') {
+        if (!signal.payload) return;
         const pc = peerConnections.get(senderId);
-        if (pc && signal.payload) {
-          try { await pc.addIceCandidate(new RTCIceCandidate(signal.payload)); }
-          catch (error) { console.warn('[Party audio] ICE candidate:', error.message); }
+        if (!pc || !pc.remoteDescription) {
+          // The offer/answer may still be in flight. Do not discard this candidate.
+          queueIceCandidate(senderId, signal.payload);
+          return;
+        }
+        try {
+          await pc.addIceCandidate(new RTCIceCandidate(signal.payload));
+        } catch (error) {
+          console.warn('[Party audio] ICE candidate:', error.message);
         }
       }
     } catch (error) {
@@ -180,6 +213,7 @@
     if (roleError) throw roleError;
     myRoomRole = mine.role || 'listener';
     processedSignalIds.clear();
+    pendingIceCandidates.clear();
 
     audioSignalChannel = db().channel(`party-audio-signals-${roomId}-${currentUser.id}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'voice_room_signals', filter: `room_id=eq.${roomId}` }, payload => {
