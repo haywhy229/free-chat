@@ -1453,12 +1453,13 @@
       const card = document.createElement('div');
       card.id = 'voiceRewardCard';
       card.className = 'voice-reward-card';
-      card.innerHTML = '<div class="voice-reward-head">🎁 DAILY VOICE REWARD <b id="voiceRewardCoins">10,000 coins</b></div><div class="voice-reward-track"><span id="voiceRewardFill"></span></div><div class="voice-reward-foot"><span id="voiceRewardTime">0:00 / 15:00</span><span id="voiceRewardStatus">Turn on your mic to earn</span></div>';
+      card.innerHTML = '<div class="voice-reward-head">🎁 DAILY VOICE REWARD <b id="voiceRewardCoins">10,000 coins</b></div><div class="voice-reward-track"><span id="voiceRewardFill"></span></div><div class="voice-reward-foot"><span id="voiceRewardTime">0:00 / 15:00</span><span id="voiceRewardStatus">Turn on your mic to earn</span></div><div class="voice-reward-actions"><span id="voiceRewardBalance">Wallet: loading…</span><button type="button" id="claimVoiceRewardBtn" disabled>Claim 10,000 coins</button></div>';
       $('micBtn').insertAdjacentElement('afterend', card);
+      $('claimVoiceRewardBtn').addEventListener('click', claimVoiceReward);
     }
   }
 
-  function renderVoiceReward(progress = 0, claimed = false) {
+  function renderVoiceReward(progress = 0, claimed = false, balance = null) {
     ensureVoiceRewardCard();
     const pct = Math.min(100, Math.round(progress / 900 * 100));
     if ($('voiceRewardFill')) $('voiceRewardFill').style.width = pct + '%';
@@ -1472,7 +1473,7 @@
     try {
       const { data, error } = await db().rpc('fc_voice_reward_heartbeat', { p_room_id: activeRoom.id });
       if (error) throw error;
-      if (data) renderVoiceReward(Number(data.progress_seconds || 0), !!data.claimed);
+      if (data) renderVoiceReward(Number(data.progress_seconds || 0), !!data.claimed, Number(data.coins_balance || 0));
     } catch (e) { console.warn('[Rewards] Heartbeat:', e.message); }
     finally { voiceRewardBusy = false; }
   }
@@ -1483,7 +1484,7 @@
     try {
       const { data, error } = await db().rpc('fc_voice_reward_status');
       if (error) throw error;
-      if (data) renderVoiceReward(Number(data.progress_seconds || 0), !!data.claimed);
+      if (data) renderVoiceReward(Number(data.progress_seconds || 0), !!data.claimed, Number(data.coins_balance || 0));
     } catch (e) { console.warn('[Rewards] Status:', e.message); }
   }
 

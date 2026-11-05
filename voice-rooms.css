@@ -1420,3 +1420,15 @@ body {
 .voice-reward-track{height:7px;margin:9px 0 7px;border-radius:99px;background:rgba(120,130,140,.18);overflow:hidden}
 .voice-reward-track span{display:block;width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#10b981,#34d399);transition:width .25s ease}
 .voice-reward-foot{font-size:11px;font-weight:500;opacity:.82}
+
+/* Daily voice reward claim control and synced wallet balance */
+.voice-reward-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;font-size:11px;font-weight:700}
+.voice-reward-actions span{color:var(--text,#17211c);opacity:.8}
+.voice-reward-actions button{border:0;border-radius:999px;padding:8px 13px;background:linear-gradient(90deg,#10b981,#059669);color:#fff;font-size:11px;font-weight:800;white-space:nowrap}
+.voice-reward-actions button:disabled{opacity:.48;cursor:not-allowed}
+
+/* Daily voice reward claim control and synced wallet balance */
+.voice-reward-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;font-size:11px;font-weight:700}
+.voice-reward-actions span{color:var(--text,#17211c);opacity:.8}
+.voice-reward-actions button{border:0;border-radius:999px;padding:8px 13px;background:linear-gradient(90deg,#10b981,#059669);color:#fff;font-size:11px;font-weight:800;white-space:nowrap}
+.voice-reward-actions button:disabled{opacity:.48;cursor:not-allowed}
